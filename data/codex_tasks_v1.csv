@@ -1,0 +1,9 @@
+id,title,owner,priority,status,due_date,kanban_lane,acceptance_criteria,notes
+CODX-001,Publish MXD-MDA creative brief,Prime Alchemist,P0,In Progress,2024-04-05,Sprint 0,"Creative brief lives in docs/ with sign-off from Crow and Glyph.","Link outline to shared MXD-MDA narrative folder."
+CODX-002,Stand up repository automations,Specter (AI Ops),P1,Not Started,2024-04-12,Backlog,"CI workflow validates lint + tests on every PR and reports back to Codex channel.","Draft pipeline in GitHub Actions leveraging existing Node/Python setup."
+CODX-003,Design generative art pipeline,Glyph (Design),P1,Not Started,2024-04-19,Backlog,"Figma frames + reference assets exported with documented prompts and style guardrails.","Coordinate with Prime Alchemist for narrative touchpoints."
+CODX-004,Prototype multimodal agent,Prime Alchemist,P0,Blocked,2024-05-03,Sprint 1,"Agent demo handles text+image requests end-to-end with fallback strategy for API limits.","Needs API key provisioning from Pulse before unblocked."
+CODX-005,Publish contribution guidelines,Specter (AI Ops),P2,Complete,2024-03-15,Sprint 0,"CONTRIBUTING.md updated with review matrix and automation checklist.","Share update in community Discord #announcements."
+CODX-006,Build Notion/Wix sync job,Pulse (Automation),P1,Not Started,2024-05-10,Sprint 2,"Nightly job pushes CSV updates to Notion database and Wix CMS via API.","Document secrets handling and rotation cadence."
+CODX-007,Launch community feedback loop,Crow (Product),P2,Not Started,2024-05-24,Backlog,"Feedback form responses triaged weekly with labels for Story, Visual, Automation.","Pilot with 5 power contributors before wider roll-out."
+CODX-008,QA acceptance script for tasks,Specter (AI Ops),P1,In Progress,2024-04-26,Sprint 0,"CLI script validates schema, due dates, and owner assignments before publishing.","Pair with Prime Alchemist to cover edge cases."
