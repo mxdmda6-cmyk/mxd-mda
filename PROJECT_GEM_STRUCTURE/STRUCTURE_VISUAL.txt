@@ -1,0 +1,74 @@
+PROJECT GEM - Complete Folder Structure
+========================================
+
+Documents/
+│
+├── 01_Finance/
+│   ├── 2025/
+│   │   ├── Bank_Statements/
+│   │   ├── Credit_Cards/
+│   │   ├── Receipts_Taxes/
+│   │   └── Pay_Stubs/
+│   ├── Investments/
+│   ├── Taxes/
+│   └── Debt_Collection/
+│
+├── 02_Personal/
+│   ├── Identification/
+│   ├── Education/
+│   ├── Journal_Entries/
+│   ├── Family_Records/
+│   ├── Social_Security/
+│   └── Fitness_and_Health/
+│
+├── 03_Medical/
+│   ├── 2025/
+│   │   ├── EOBs_Insurance/
+│   │   ├── Lab_Results/
+│   │   └── Doctor_Visits/
+│   ├── Medical_History/
+│   └── Provider_Information/
+│
+├── 04_Household/
+│   ├── Auto/
+│   ├── Mortgage_or_Lease/
+│   ├── Utilities/
+│   ├── Manuals_Warranties/
+│   └── Assistance/
+│
+├── 05_Work/
+│   ├── Contracts/
+│   ├── Resume_CV/
+│   └── Projects/
+│
+├── 06_Legal/
+│   ├── Court_Case_27-CR-25-22797/  (Pre-trial: Dec 2, 9 AM)
+│   ├── OFP_Case_27DAFA24-5203/
+│   └── Court_Case_27-CO-25-4917/   (LVNV: Oct 22, 8:15 AM) ⚠️ URGENT
+│
+├── 07_Creative_Projects/
+│   ├── MXD-MDA_Brand/
+│   │   ├── Brand_Guide/
+│   │   ├── Marketing/
+│   │   ├── Content/
+│   │   └── Assets/
+│   ├── Wheres_Crow_Project/
+│   │   ├── Business_Plan/
+│   │   ├── Artwork/
+│   │   └── Story_Development/
+│   └── Alchemical_Nexus/
+│       ├── Book_of_Skretz/
+│       ├── MVP_Development/
+│       └── Research/
+│
+└── 99_Archive/
+    ├── Old_Projects/
+    ├── Web_Saves/
+    └── Deprecated_Files/
+
+========================================
+Total Folders: 56
+Total Size: ~301 KB
+Created: November 1, 2025
+Status: Ready for Deployment
+========================================
