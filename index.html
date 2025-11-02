@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños! 16 Años 💀🎉</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Falling Marigold Petals Background -->
+    <div class="petals-container" id="petalsContainer"></div>
+
+    <!-- Papel Picado Banners -->
+    <div class="papel-picado">
+        <div class="banner banner-1"></div>
+        <div class="banner banner-2"></div>
+        <div class="banner banner-3"></div>
+        <div class="banner banner-4"></div>
+        <div class="banner banner-5"></div>
+    </div>
+
+    <!-- Main Card Container -->
+    <div class="card-container">
+        <!-- Title -->
+        <h1 class="title animate-in">
+            ¡Feliz 16 Cumpleaños! 🎂
+        </h1>
+        <p class="subtitle animate-in">
+            Celebrando vida, amor y 16 años de alegría<br>
+            <span class="day-of-dead">Día de los Muertos Special Edition</span>
+        </p>
+
+        <!-- Interactive Sugar Skull -->
+        <div class="skull-container">
+            <!-- 16 Memory Petals in a Circle -->
+            <div class="memory-circle">
+                <div class="petal petal-1" data-year="1">
+                    <div class="petal-content">1</div>
+                </div>
+                <div class="petal petal-2" data-year="2">
+                    <div class="petal-content">2</div>
+                </div>
+                <div class="petal petal-3" data-year="3">
+                    <div class="petal-content">3</div>
+                </div>
+                <div class="petal petal-4" data-year="4">
+                    <div class="petal-content">4</div>
+                </div>
+                <div class="petal petal-5" data-year="5">
+                    <div class="petal-content">5</div>
+                </div>
+                <div class="petal petal-6" data-year="6">
+                    <div class="petal-content">6</div>
+                </div>
+                <div class="petal petal-7" data-year="7">
+                    <div class="petal-content">7</div>
+                </div>
+                <div class="petal petal-8" data-year="8">
+                    <div class="petal-content">8</div>
+                </div>
+                <div class="petal petal-9" data-year="9">
+                    <div class="petal-content">9</div>
+                </div>
+                <div class="petal petal-10" data-year="10">
+                    <div class="petal-content">10</div>
+                </div>
+                <div class="petal petal-11" data-year="11">
+                    <div class="petal-content">11</div>
+                </div>
+                <div class="petal petal-12" data-year="12">
+                    <div class="petal-content">12</div>
+                </div>
+                <div class="petal petal-13" data-year="13">
+                    <div class="petal-content">13</div>
+                </div>
+                <div class="petal petal-14" data-year="14">
+                    <div class="petal-content">14</div>
+                </div>
+                <div class="petal petal-15" data-year="15">
+                    <div class="petal-content">15</div>
+                </div>
+                <div class="petal petal-16" data-year="16">
+                    <div class="petal-content">16</div>
+                </div>
+            </div>
+
+            <!-- Central Sugar Skull -->
+            <div class="sugar-skull" id="mainSkull">
+                <div class="skull-face">
+                    <div class="flower-forehead">🌼</div>
+                    <div class="eyes">
+                        <div class="eye eye-left">
+                            <div class="eye-flower">🌸</div>
+                        </div>
+                        <div class="eye eye-right">
+                            <div class="eye-flower">🌺</div>
+                        </div>
+                    </div>
+                    <div class="nose">▼</div>
+                    <div class="mouth">
+                        <div class="teeth"></div>
+                    </div>
+                    <div class="decorations">
+                        <div class="deco deco-1">✦</div>
+                        <div class="deco deco-2">✦</div>
+                        <div class="deco deco-3">❋</div>
+                        <div class="deco deco-4">❋</div>
+                    </div>
+                </div>
+                <div class="skull-click-hint">Click me! 💀</div>
+            </div>
+        </div>
+
+        <!-- Instruction -->
+        <p class="instruction">
+            ✨ Click each numbered petal to reveal a special memory ✨<br>
+            <small>Click the skull for a surprise!</small>
+        </p>
+
+        <!-- Hidden Counter for Easter Egg -->
+        <div class="secret-counter" id="secretCounter"></div>
+    </div>
+
+    <!-- Memory Modal -->
+    <div class="modal" id="memoryModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2 class="modal-title" id="modalTitle">Year 1</h2>
+            <div class="modal-body" id="modalBody">
+                <p>Your first year of life! 👶</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="nextMemory">Next Memory →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti Container -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Audio Elements -->
+    <audio id="clickSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGmi98OScTgwOUKvo8LRkHAU7k9n0yX0sBS1+zPLaizsKGWS57OihUBELTKXh8bllHgU7k9n0yX0sBSl6yPDajkALF2K37OmkUhELTKXh8blnHgY8lNr1xnwtBSt8y/DajkELF2K37Oik" type="audio/wav">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "mxd-mda",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "postCreateCommand": "python -m pip install --upgrade pip && npm --version && python --version",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-pull-request-github"
+      ]
+    }
+  }
+}
