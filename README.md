@@ -1,147 +1,325 @@
-# 🎉 16 Años: Interactive Day of the Dead Birthday Card 💀
+# 🜁 MXD-MDA: Strategic Operations Hub
 
-An interactive web-based birthday card celebrating a special 16th birthday on Día de los Muertos (Day of the Dead). This digital card combines traditional Mexican cultural elements with modern web technology to create a unique, memorable experience.
+**Turning Stories into Gold — A Transmedia Empire in the Making**
 
-## 🌟 Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Status: Active Development](https://img.shields.io/badge/Status-Active%20Development-green.svg)]()
 
-- **16 Interactive Memory Petals**: Click each marigold petal (numbered 1-16) to reveal memories from each year of life
-- **Animated Sugar Skull**: Beautiful, interactive calavera (sugar skull) centerpiece with Day of the Dead decorations
-- **Falling Marigold Petals**: Continuous animation of floating flower petals
-- **Papel Picado Banners**: Traditional Mexican paper banner decorations that flutter at the top
-- **Confetti Effects**: Celebratory confetti bursts when opening memories
-- **Easter Eggs**: Hidden surprises including:
-  - Multiple skull clicks reveal secret messages
-  - Konami code activation (↑↑↓↓←→←→BA)
-  - Special achievement for clicking all 16 petals
-  - Triple and ultimate bonuses for persistence
-- **Fully Responsive**: Works beautifully on desktop, tablet, and mobile devices
-- **No Dependencies**: Pure HTML, CSS, and JavaScript - no frameworks required
+---
+
+## 🌟 What Is MXD-MDA?
+
+**MXD-MDA** (pronounced "mixed media") is a **transmedia creative ecosystem** that weaves interconnected narratives across multiple mediums — books, interactive experiences, AI agents, workshops, and community — blending esoteric knowledge with creative innovation to guide others on a journey of transformation.
+
+This repository serves as the **operational backbone** for the entire MXD-MDA universe.
+
+---
+
+## 🎯 Mission
+
+**"Turn Your Story into Gold"**
+
+We guide storytellers, creators, and seekers through the alchemical process of transforming their lived experiences — especially pain, betrayal, and transformation — into creative gold.
+
+---
+
+## 📚 Current Active Projects
+
+### 1. Where's Crow 🐦‍⬛ *(Priority: Q4 2025)*
+An interactive seek-and-find adventure book with digital MVP
+
+**Status:** Manuscript finalization, MVP in development
+**Target:** Kickstarter Q1 2026 ($75,000 goal)
+**Deliverables:**
+- Interactive book with Midnight Carnival scene
+- Kickstarter campaign
+- Email list (500 subscribers)
+
+📁 **[Production Checklist →](docs/projects/wheres-crow/PRODUCTION_CHECKLIST.md)**
+
+---
+
+### 2. Book of Skretz 📖
+A poetry collection documenting transformation arcs
+
+**Status:** Poems exist in `/poems/`, publication planning phase
+**Target:** Q2 2026 publication
+
+---
+
+### 3. Alchemical Nexus 🜁
+A multi-agent AI therapeutic system for creative guidance
+
+**Status:** Design phase (Phase 2: 2027-2028)
+**Tech Stack:** FastAPI, Qdrant, LangChain, Gemini
+
+---
+
+### 4. Heartbreak by Design 💔
+A personal transformation chronicle (The Catalyst Arc)
+
+**Status:** Documentation & manuscript in progress
+
+---
+
+### 5. Creative Alchemy Workshops 🎓
+Community platform & courses for storytellers
+
+**Status:** Phase 2 planning (2027-2028)
+
+---
+
+## 🗂️ Repository Structure
+
+```
+mxd-mda/
+├── docs/                          # Strategic documentation (START HERE!)
+│   ├── PROJECT_MASTER_MAP.md      # Single source of truth for all locations
+│   ├── CONSOLIDATION_ROADMAP.md   # Infrastructure cleanup protocol
+│   ├── GETTING_STARTED.md         # New user guide
+│   ├── operations/                # Sprint calendars, reviews, risk register
+│   ├── projects/                  # Per-project production checklists
+│   ├── brand/                     # Brand Bible, voice, visual guidelines
+│   └── technical/                 # Tech stack, APIs, architecture
+├── src/                           # Source code
+│   ├── agents/                    # AI agent implementations
+│   ├── automation/                # Workflow scripts
+│   └── utils/                     # Shared utilities
+├── tests/                         # Test suites
+└── scripts/                       # Utility scripts
+```
+
+---
 
 ## 🚀 Quick Start
 
-### Option 1: Open Locally
-1. Clone or download this repository
-2. Open `index.html` in your web browser
-3. Start clicking and exploring!
+### For Strategic Planning:
+1. **Read:** [docs/PROJECT_MASTER_MAP.md](docs/PROJECT_MASTER_MAP.md) — Your compass
+2. **Check:** [docs/operations/Q4_2025_SPRINT_CALENDAR.md](docs/operations/Q4_2025_SPRINT_CALENDAR.md) — Today's focus
+3. **Review:** [docs/projects/wheres-crow/PRODUCTION_CHECKLIST.md](docs/projects/wheres-crow/PRODUCTION_CHECKLIST.md) — Current priorities
 
-### Option 2: GitHub Pages (Recommended for Sharing)
-1. Push this code to your GitHub repository
-2. Go to Settings → Pages
-3. Select the branch (usually `main`) and root folder
-4. Your card will be live at: `https://yourusername.github.io/your-repo-name/`
+### For Developers:
+1. Clone the repo: `git clone [repo-url]`
+2. Review tech docs: `docs/technical/`
+3. Check agent code: `src/agents/`
 
-### Option 3: Share via QR Code
-1. Deploy to GitHub Pages or any web host
-2. Generate a QR code for the URL using [qr-code-generator.com](https://www.qr-code-generator.com/)
-3. Print the QR code on a physical card - scan to view the interactive experience!
+### For New Collaborators:
+1. **Start here:** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
+2. Read the Master Map to understand where everything lives
+3. Join the weekly review ritual (Fridays)
 
-## 📁 Project Structure
+---
 
-- **index.html** — Main birthday card HTML with structure
-- **styles.css** — All styling, animations, and Day of the Dead theme
-- **script.js** — Interactive functionality and easter eggs
-- **docs/CANVA_GUIDE.md** — Guide for creating custom graphics with Canva
+## 📅 Current Timeline: Q4 2025
 
-## 🎨 Customization Guide
+**Mission:** Launch Where's Crow MVP & Kickstarter Pre-Campaign
 
-### Personalizing Memories
-Edit the `memories` object in `script.js` (starting at line 4) to customize each year's message:
+**Days Remaining:** 59 days (as of Nov 2, 2025)
 
-```javascript
-const memories = {
-    1: {
-        title: "Year 1 - Custom Title 🎈",
-        content: "Your personalized memory for year 1..."
-    },
-    // ... customize all 16 years
-};
-```
+**Key Milestones:**
+- ✅ **Nov 8:** Manuscript v1.0-FINAL
+- ✅ **Nov 15:** Art asset inventory complete
+- ✅ **Dec 20:** MVP v1.0 live and tested
+- ✅ **Dec 31:** Kickstarter campaign draft complete
 
-### Adding Photos
-You can add photos to memories by modifying the modal body in `script.js`:
+📆 **[Full Sprint Calendar →](docs/operations/Q4_2025_SPRINT_CALENDAR.md)**
 
-```javascript
-body.innerHTML = `
-    <img src="path/to/photo.jpg" style="max-width: 100%; border-radius: 10px; margin-bottom: 15px;">
-    <p>${memory.content}</p>
-`;
-```
+---
 
-### Changing Colors
-Edit CSS variables in `styles.css` (lines 3-10) to customize the color scheme:
+## 🎯 Q4 2025 OKRs
 
-```css
-:root {
-    --marigold: #FFA500;
-    --purple: #9D4EDD;
-    --pink: #FF006E;
-    /* ... more colors */
-}
-```
+### Objective 1: Launch Where's Crow MVP
+- **KR1:** Complete manuscript to v1.0-FINAL → Target: 100% by Nov 8
+- **KR2:** Build playable Midnight Carnival scene → Target: 100% by Dec 20
+- **KR3:** Test with 20+ users → Target: 20 testers by Dec 20
 
-### Adding Music
-Replace the audio element in `index.html` with a real audio file:
+### Objective 2: Kickstarter Pre-Launch
+- **KR1:** Draft complete campaign page → Target: 100% by Dec 31
+- **KR2:** Build email list to 500 subscribers → Target: 500 by Dec 31
+- **KR3:** Create campaign video script → Target: 100% by Dec 31
 
-```html
-<audio id="birthdayMusic" autoplay loop>
-    <source src="las-mananitas.mp3" type="audio/mpeg">
-</audio>
-```
+### Objective 3: Infrastructure Consolidation
+- **KR1:** Notion Master Hub operational → Target: 100% by Nov 8
+- **KR2:** Google Drive canonical structure → Target: 100% by Nov 8
+- **KR3:** Git repo clean & versioned → Target: 100% by Nov 15
 
-## 🎭 Cultural Significance
+---
 
-**Día de los Muertos (Day of the Dead)** is a Mexican holiday celebrated on November 1-2 that honors deceased loved ones. Key elements incorporated in this card:
+## 🛠️ Tech Stack
 
-- **Calaveras (Sugar Skulls)**: Decorated skulls representing departed souls
-- **Marigolds (Cempasúchil)**: Flowers that guide spirits with their vibrant color and scent
-- **Papel Picado**: Decorative paper banners with intricate cut designs
-- **Vibrant Colors**: Celebration of life through bold, joyful colors
+### Current Stack:
+- **Automation:** Make.com
+- **Backend:** FastAPI, Python
+- **AI/ML:** Gemini, LangChain
+- **Database:** Notion API, Qdrant (vector DB)
+- **Frontend:** HTML5, CSS3, JavaScript (MVP)
+- **Hosting:** GitHub Pages, Netlify
+- **Community:** Discord (planned)
+- **Email:** Beehiiv (planned)
 
-This card celebrates both a birthday and the beautiful tradition of honoring life and memory.
+📄 **[Full Tech Documentation →](docs/technical/)** *(To be created)*
 
-## 🎮 Easter Eggs & Secrets
+---
 
-Try to discover all the hidden features:
-1. Click the sugar skull multiple times (especially 3 and 16 times!)
-2. Use the Konami code on your keyboard: ↑↑↓↓←→←→BA
-3. Click all 16 petals to unlock a special achievement
-4. Check the browser console for hints (press F12)
+## 🎨 Brand Identity
 
-## 🚀 Deployment Options
+**Archetype:** Sage/Mystic + Creator/Alchemist
+**Mission:** Turn Your Story into Gold
+**Aesthetic:** Alchemical, mystical, transformation-focused
+**Color Palette:** Marigold orange, deep purple, midnight blue, gold accents
 
-### GitHub Pages (Free)
-- Push to GitHub
-- Enable Pages in repository settings
-- Share the URL
+**Voice & Tone:**
+- **Teaching:** Clear, empowering, structured
+- **Storytelling:** Evocative, mystical, poetic
+- **Community:** Warm, inclusive, supportive
+- **Strategy:** Confident, analytical, decisive
 
-### Netlify (Free)
-1. Drag and drop the folder to [netlify.com/drop](https://netlify.com/drop)
-2. Get an instant shareable link
+📖 **[Brand Bible →](docs/brand/)** *(To be created)*
 
-### Vercel (Free)
-1. Install Vercel CLI: `npm i -g vercel`
-2. Run `vercel` in project directory
-3. Follow prompts for instant deployment
+---
 
-## 🎯 Future Ideas
+## 🔄 Workflows
 
-- Add voice recording messages for each year
-- Include photo gallery integration
-- Add Instagram/social media sharing
-- Create year-specific video clips
-- Build a family collaboration feature (pull requests for memories!)
-- Add multiple language support
-- Create a "time capsule" feature for future birthdays
+### Daily Operations:
+1. Check [Q4 Sprint Calendar](docs/operations/Q4_2025_SPRINT_CALENDAR.md) for today's focus
+2. Update project checklists in real-time
+3. Commit code/docs regularly (push daily)
+
+### Weekly Reviews:
+Every Friday:
+1. Complete [Weekly Review Ritual](docs/operations/WEEKLY_REVIEW_TEMPLATE.md)
+2. Update sprint calendar & OKR progress
+3. Audit for duplicate folders/scattered assets
+4. Plan next week's priorities
+
+### Before Creating Anything New:
+1. **STOP** ⏸️
+2. **Check [PROJECT_MASTER_MAP.md](docs/PROJECT_MASTER_MAP.md)** first
+3. **Use existing canonical location** (or update map, THEN create)
+
+---
+
+## 🚨 Critical Rules
+
+1. **NO DUPLICATE FOLDERS** — Always check Master Map first
+2. **ONE SOURCE OF TRUTH** — If not in Master Map, it doesn't exist
+3. **VERSION EVERYTHING** — Use semantic versioning (v1.0, v1.1, etc.)
+4. **DOCUMENT AS YOU GO** — Don't batch; update in real-time
+5. **COMMIT FREQUENTLY** — Push to Git regularly, don't let local diverge
+
+---
 
 ## 🤝 Contributing
 
-This is a personal project, but feel free to fork and adapt it for your own celebrations! If you create something cool, share it back.
+This is primarily a personal/solo creative endeavor, but collaboration is welcome!
 
-## 📝 License
-Licensed under MIT (see **LICENSE**).
+**If you'd like to contribute:**
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to branch: `git push origin feature/your-feature-name`
+5. Open a Pull Request
 
-## 💖 Credits
+**See:** [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines
 
-Created with love for a special 16th birthday. Born on Día de los Muertos, forever celebrated with joy and color.
+---
 
-**¡Que viva la vida! 🎉💀🌺**
+## 📊 Project Status
+
+**Phase:** Foundation & Community (2025-2027)
+**Current Sprint:** Q4 2025 — Where's Crow MVP Launch
+**Overall Progress:** 🟡 On Track with Adjustments Needed
+
+**Timeline Pressure:** 🚨 High (59 days to Q4 deadline)
+**Resource Constraints:** 🟡 Moderate (Solo creator, limited time)
+**Risk Level:** 🟡 Medium (manageable with scope adjustments)
+
+📈 **[Full Risk Register →](docs/operations/)** *(To be created)*
+
+---
+
+## 📞 Contact & Community
+
+**Creator:** MXD-MDA (Amber)
+
+**Platforms:** *(To be updated after launch)*
+- Discord: *(Coming Q1 2026)*
+- Email List: *(Beehiiv, launching Nov 2025)*
+- Website: *(Coming Q1 2026)*
+
+**Social Media:** *(To be added)*
+
+---
+
+## 📄 License
+
+Licensed under [MIT License](LICENSE).
+
+Feel free to use this structure and approach for your own creative operations!
+
+---
+
+## 🔮 Vision: The 5-Year Roadmap
+
+### Phase 1: Foundation & Community (2025-2027)
+- Launch Where's Crow (book + MVP)
+- Build engaged community (Discord, email list)
+- Establish brand presence
+- Publish Book of Skretz
+
+### Phase 2: Expansion & Technology (2027-2028)
+- Launch Alchemical Nexus AI system
+- Develop Creative Case Manager (CCM Agent)
+- Offer workshops & courses
+- Revenue: $2,500-7,000/month
+
+### Phase 3: Empire & Automation (2029-2030)
+- Full multi-agent ecosystem operational
+- Automated community management
+- Multiple revenue streams
+- Scale to full-time creative business
+
+🗺️ **[Full Roadmap →](docs/operations/)** *(To be documented)*
+
+---
+
+## 🜁 Philosophy
+
+**"From Chaos to Gold"**
+
+This isn't about perfection — it's about:
+- ✨ **Clarity** over confusion
+- 🔥 **Momentum** over martyrdom
+- 📈 **Progress** over perfection
+- ⚙️ **Systems** over scrambling
+
+We're not just building projects; we're practicing **operational alchemy** — turning scattered ideas and painful experiences into tangible, valuable gold.
+
+---
+
+## 🎉 Recent Milestones
+
+**November 2, 2025:**
+- ✅ Strategic infrastructure created (Master Map, Sprint Calendar, Consolidation Roadmap)
+- ✅ Repository reorganized for operational clarity
+- ✅ Where's Crow production checklist established
+- ✅ Q4 2025 timeline locked
+
+**Next Milestone:** November 8, 2025 — Infrastructure consolidation complete
+
+---
+
+## ⏭️ Next Steps
+
+1. **Read:** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
+2. **Check:** [docs/PROJECT_MASTER_MAP.md](docs/PROJECT_MASTER_MAP.md)
+3. **Start:** [docs/operations/Q4_2025_SPRINT_CALENDAR.md](docs/operations/Q4_2025_SPRINT_CALENDAR.md)
+
+---
+
+**"Welcome to the forge. Let's turn your story into gold."** 🜁
+
+---
+
+*Last Updated: November 2, 2025*
+*Repository Version: 2.0 (Strategic Infrastructure Reorganization)*
