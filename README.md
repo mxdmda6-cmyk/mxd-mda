@@ -1,147 +1,109 @@
-# 🎉 16 Años: Interactive Day of the Dead Birthday Card 💀
+# Interactive Experiences | MXD-MDA
 
-An interactive web-based birthday card celebrating a special 16th birthday on Día de los Muertos (Day of the Dead). This digital card combines traditional Mexican cultural elements with modern web technology to create a unique, memorable experience.
+A collection of beautifully crafted interactive web experiences for celebration and self-discovery.
 
-## 🌟 Features
+## 🎨 Projects
 
-- **16 Interactive Memory Petals**: Click each marigold petal (numbered 1-16) to reveal memories from each year of life
-- **Animated Sugar Skull**: Beautiful, interactive calavera (sugar skull) centerpiece with Day of the Dead decorations
-- **Falling Marigold Petals**: Continuous animation of floating flower petals
-- **Papel Picado Banners**: Traditional Mexican paper banner decorations that flutter at the top
-- **Confetti Effects**: Celebratory confetti bursts when opening memories
-- **Easter Eggs**: Hidden surprises including:
-  - Multiple skull clicks reveal secret messages
-  - Konami code activation (↑↑↓↓←→←→BA)
-  - Special achievement for clicking all 16 petals
-  - Triple and ultimate bonuses for persistence
-- **Fully Responsive**: Works beautifully on desktop, tablet, and mobile devices
-- **No Dependencies**: Pure HTML, CSS, and JavaScript - no frameworks required
+### 🎂💀 [Day of the Dead Birthday Card](projects/birthday-card/)
+An interactive 16th birthday celebration featuring marigold petals, sugar skull animations, and personalized memories for each year of life. Born on Día de los Muertos, celebrated with vibrant colors and cultural tradition.
+
+**Features:** 16 interactive memory petals • Animated sugar skull • Falling marigolds • Easter eggs • Fully responsive
+
+[View Project →](projects/birthday-card/)
+
+---
+
+### 🌟✨ [Emotional Manifesto](projects/human-design-manifesto/)
+A sacred guide for the 5/1 Manifesting Generator with Emotional Authority. Features 50 daily affirmations, interactive energy centers, animated emotional waves, and deep wisdom about your unique Human Design blueprint.
+
+**Features:** 50 daily affirmations • Interactive gates & centers • Emotional wave visualization • Print-friendly • Mobile optimized
+
+[View Project →](projects/human-design-manifesto/)
+
+---
 
 ## 🚀 Quick Start
 
-### Option 1: Open Locally
-1. Clone or download this repository
-2. Open `index.html` in your web browser
-3. Start clicking and exploring!
+### View Locally
+```bash
+# Clone the repository
+git clone https://github.com/mxdmda6-cmyk/mxd-mda.git
+cd mxd-mda
 
-### Option 2: GitHub Pages (Recommended for Sharing)
-1. Push this code to your GitHub repository
+# Open the landing page
+open index.html
+
+# Or view individual projects
+open projects/birthday-card/index.html
+open projects/human-design-manifesto/index.html
+```
+
+### Deploy to GitHub Pages
+1. Push this repository to GitHub
 2. Go to Settings → Pages
-3. Select the branch (usually `main`) and root folder
-4. Your card will be live at: `https://yourusername.github.io/your-repo-name/`
+3. Select your branch and root folder
+4. Your site will be live at: `https://yourusername.github.io/mxd-mda/`
 
-### Option 3: Share via QR Code
-1. Deploy to GitHub Pages or any web host
-2. Generate a QR code for the URL using [qr-code-generator.com](https://www.qr-code-generator.com/)
-3. Print the QR code on a physical card - scan to view the interactive experience!
+## 📁 Repository Structure
 
-## 📁 Project Structure
-
-- **index.html** — Main birthday card HTML with structure
-- **styles.css** — All styling, animations, and Day of the Dead theme
-- **script.js** — Interactive functionality and easter eggs
-- **docs/CANVA_GUIDE.md** — Guide for creating custom graphics with Canva
-
-## 🎨 Customization Guide
-
-### Personalizing Memories
-Edit the `memories` object in `script.js` (starting at line 4) to customize each year's message:
-
-```javascript
-const memories = {
-    1: {
-        title: "Year 1 - Custom Title 🎈",
-        content: "Your personalized memory for year 1..."
-    },
-    // ... customize all 16 years
-};
+```
+mxd-mda/
+├── index.html                          # Landing page with project links
+├── README.md                           # This file
+├── projects/
+│   ├── birthday-card/                  # Day of the Dead birthday card
+│   │   ├── index.html
+│   │   ├── styles.css
+│   │   ├── script.js
+│   │   └── README.md
+│   └── human-design-manifesto/         # Emotional manifesto
+│       ├── index.html
+│       ├── styles.css
+│       ├── script.js
+│       └── README.md
+└── docs/                               # Documentation guides
 ```
 
-### Adding Photos
-You can add photos to memories by modifying the modal body in `script.js`:
+## 🎯 Technology
 
-```javascript
-body.innerHTML = `
-    <img src="path/to/photo.jpg" style="max-width: 100%; border-radius: 10px; margin-bottom: 15px;">
-    <p>${memory.content}</p>
-`;
-```
+All projects are built with:
+- **Pure HTML/CSS/JavaScript** - No frameworks or dependencies
+- **Responsive Design** - Beautiful on all devices
+- **Interactive Animations** - Smooth, engaging experiences
+- **Modern Web Standards** - CSS Grid, Intersection Observer, CSS Custom Properties
 
-### Changing Colors
-Edit CSS variables in `styles.css` (lines 3-10) to customize the color scheme:
+## 🌐 Live Demo
 
-```css
-:root {
-    --marigold: #FFA500;
-    --purple: #9D4EDD;
-    --pink: #FF006E;
-    /* ... more colors */
-}
-```
+Visit the [live site](https://mxdmda6-cmyk.github.io/mxd-mda/) to explore both projects.
 
-### Adding Music
-Replace the audio element in `index.html` with a real audio file:
+## 📖 Documentation
 
-```html
-<audio id="birthdayMusic" autoplay loop>
-    <source src="las-mananitas.mp3" type="audio/mpeg">
-</audio>
-```
-
-## 🎭 Cultural Significance
-
-**Día de los Muertos (Day of the Dead)** is a Mexican holiday celebrated on November 1-2 that honors deceased loved ones. Key elements incorporated in this card:
-
-- **Calaveras (Sugar Skulls)**: Decorated skulls representing departed souls
-- **Marigolds (Cempasúchil)**: Flowers that guide spirits with their vibrant color and scent
-- **Papel Picado**: Decorative paper banners with intricate cut designs
-- **Vibrant Colors**: Celebration of life through bold, joyful colors
-
-This card celebrates both a birthday and the beautiful tradition of honoring life and memory.
-
-## 🎮 Easter Eggs & Secrets
-
-Try to discover all the hidden features:
-1. Click the sugar skull multiple times (especially 3 and 16 times!)
-2. Use the Konami code on your keyboard: ↑↑↓↓←→←→BA
-3. Click all 16 petals to unlock a special achievement
-4. Check the browser console for hints (press F12)
-
-## 🚀 Deployment Options
-
-### GitHub Pages (Free)
-- Push to GitHub
-- Enable Pages in repository settings
-- Share the URL
-
-### Netlify (Free)
-1. Drag and drop the folder to [netlify.com/drop](https://netlify.com/drop)
-2. Get an instant shareable link
-
-### Vercel (Free)
-1. Install Vercel CLI: `npm i -g vercel`
-2. Run `vercel` in project directory
-3. Follow prompts for instant deployment
-
-## 🎯 Future Ideas
-
-- Add voice recording messages for each year
-- Include photo gallery integration
-- Add Instagram/social media sharing
-- Create year-specific video clips
-- Build a family collaboration feature (pull requests for memories!)
-- Add multiple language support
-- Create a "time capsule" feature for future birthdays
+- [Birthday Card Documentation](projects/birthday-card/README.md)
+- [Emotional Manifesto Documentation](projects/human-design-manifesto/README.md)
+- [QR Code Guide](docs/QR_CODE_GUIDE.md) - Generate QR codes for easy sharing
+- [Personalization Template](PERSONALIZATION_TEMPLATE.md) - Customize for your own use
 
 ## 🤝 Contributing
 
-This is a personal project, but feel free to fork and adapt it for your own celebrations! If you create something cool, share it back.
+This repository contains personal projects, but feel free to:
+- Fork for your own celebrations or spiritual tools
+- Adapt the code for different Human Design types
+- Submit improvements or bug fixes via pull requests
+- Share your creations with the community
 
-## 📝 License
-Licensed under MIT (see **LICENSE**).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-## 💖 Credits
+## 📜 License
 
-Created with love for a special 16th birthday. Born on Día de los Muertos, forever celebrated with joy and color.
+Licensed under MIT. See [LICENSE](LICENSE) for details.
 
-**¡Que viva la vida! 🎉💀🌺**
+## 🙏 Acknowledgments
+
+- **Day of the Dead Birthday Card**: Created with love to celebrate a special birthday on Día de los Muertos
+- **Emotional Manifesto**: Created with reverence for the Human Design System founded by Ra Uru Hu
+
+---
+
+**Built with care and intention** ✨
+
+*Each project is crafted to create meaningful, memorable experiences through interactive web technology.*
