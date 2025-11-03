@@ -249,6 +249,10 @@ function nextMemory() {
     clickedPetals.add(currentYear);
     document.querySelector(`.petal[data-year="${currentYear}"]`).classList.add('clicked');
 
+    // Also mark the *next* year as clicked when showing it.
+    clickedPetals.add(nextYear);
+    document.querySelector(`.petal[data-year="${nextYear}"]`).classList.add('clicked');
+
     // Show next
     showMemory(nextYear);
 }
