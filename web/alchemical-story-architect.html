@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Alchemical Story Architect - Generate transmedia narratives using the 7-stage alchemical framework">
+    <title>Alchemical Story Architect | MXD-MDA</title>
+    <style>
+        /* === README: Functionality Status === 
+         * This is a STUB/SCAFFOLD version for MVP foundation.
+         * Current state: Client-only, no API calls, no authentication.
+         * All functionality is mocked with placeholder actions.
+         * 
+         * Future integration (post-MVP):
+         * - Connect to FastAPI backend (FASTAPI_BASE_URL)
+         * - Integrate Gemini API for AI story generation
+         * - Add user authentication and session management
+         * - Implement actual Markdown/JSON export to server
+         * - Add save/load functionality for drafts
+         */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .mvp-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+        
+        .mvp-notice strong {
+            color: #856404;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+        
+        select, textarea, button {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.1s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .stage-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .outputs {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .outputs h2 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .output-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .output-content.empty {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .export-buttons button {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+            
+            .export-buttons button {
+                width: 100%;
+            }
+        }
+        
+        /* Accessibility */
+        button:focus, select:focus, textarea:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🜃 Alchemical Story Architect</h1>
+            <p class="subtitle">Generate transmedia narratives using the 7-stage alchemical framework</p>
+        </header>
+        
+        <div class="mvp-notice">
+            <strong>MVP Notice:</strong> This is a functional scaffold. AI generation is currently stubbed. 
+            Real integration with Gemini API will be added in a future sprint via secure server endpoints.
+        </div>
+        
+        <main>
+            <form id="storyForm" aria-label="Story generation form">
+                <div class="form-group">
+                    <label for="stageSelect">
+                        Select Alchemical Stage
+                        <span class="sr-only">(required)</span>
+                    </label>
+                    <select id="stageSelect" name="stage" required aria-required="true">
+                        <option value="">-- Choose a stage --</option>
+                        <option value="calcination">🔥 Calcination - Breaking Down the Old</option>
+                        <option value="dissolution">💧 Dissolution - Releasing into Chaos</option>
+                        <option value="separation">🌬️ Separation - Sorting Truth from Illusion</option>
+                        <option value="conjunction">🤝 Conjunction - Union of Opposites</option>
+                        <option value="fermentation">🍷 Fermentation - Death and Rebirth</option>
+                        <option value="distillation">✨ Distillation - Purification</option>
+                        <option value="coagulation">💎 Coagulation - Manifestation</option>
+                    </select>
+                    <div id="stageInfo" class="stage-info" role="status" aria-live="polite"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="promptText">
+                        Story Prompt
+                        <span class="sr-only">(required)</span>
+                    </label>
+                    <textarea 
+                        id="promptText" 
+                        name="prompt" 
+                        placeholder="Describe the narrative elements, character details, setting, or themes you want to explore in this stage..."
+                        required
+                        aria-required="true"
+                    ></textarea>
+                </div>
+                
+                <button type="submit" id="generateBtn">
+                    Generate Story
+                </button>
+            </form>
+            
+            <div class="outputs" role="region" aria-label="Generated content">
+                <h2>Generated Content</h2>
+                <div id="outputContent" class="output-content empty">
+                    No content generated yet. Select a stage, enter a prompt, and click "Generate Story".
+                </div>
+                
+                <div class="export-buttons">
+                    <button type="button" id="exportMarkdown" class="btn-secondary" disabled>
+                        Export as Markdown
+                    </button>
+                    <button type="button" id="exportJson" class="btn-secondary" disabled>
+                        Export as JSON
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // === README: JavaScript Functionality ===
+        // Current implementation: Client-side stub with mock data
+        // TODO (post-MVP): Replace with actual API calls to FastAPI + Gemini
+        
+        const stageDescriptions = {
+            calcination: "The beginning. The protagonist's world is broken down, comfort shattered. This is the inciting incident.",
+            dissolution: "Emotional chaos. The protagonist loses control, enters the unknown, confronts confusion.",
+            separation: "Discernment phase. Sorting allies from enemies, truth from illusion. Learning what truly matters.",
+            conjunction: "Integration. Opposing forces unite. Internal and external worlds align. Partnerships form.",
+            fermentation: "The darkest hour. Symbolic death before rebirth. All seems lost, but transformation begins.",
+            distillation: "Purification through trials. The protagonist emerges refined, focused on essentials.",
+            coagulation: "The new reality solidifies. Triumph and integration. The quest concludes, mastery achieved."
+        };
+        
+        let generatedContent = null;
+        
+        // Stage selection handler
+        document.getElementById('stageSelect').addEventListener('change', function(e) {
+            const stage = e.target.value;
+            const infoDiv = document.getElementById('stageInfo');
+            
+            if (stage && stageDescriptions[stage]) {
+                infoDiv.textContent = stageDescriptions[stage];
+            } else {
+                infoDiv.textContent = '';
+            }
+        });
+        
+        // Form submission handler (stubbed)
+        document.getElementById('storyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const stage = document.getElementById('stageSelect').value;
+            const prompt = document.getElementById('promptText').value.trim();
+            const generateBtn = document.getElementById('generateBtn');
+            const outputDiv = document.getElementById('outputContent');
+            
+            if (!stage || !prompt) {
+                alert('Please select a stage and enter a prompt.');
+                return;
+            }
+            
+            // Disable button during "generation"
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            outputDiv.classList.add('empty');
+            outputDiv.textContent = 'Generating story content... (This is a stub - real AI generation will be added later)';
+            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // TODO: Replace with actual API call
+            // const response = await fetch(`${FASTAPI_BASE_URL}/generate/story`, {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ stage, prompt })
+            // });
+            // const data = await response.json();
+            
+            // Mock generated content
+            generatedContent = {
+                stage: stage,
+                prompt: prompt,
+                timestamp: new Date().toISOString(),
+                content: `# ${stage.charAt(0).toUpperCase() + stage.slice(1)} Stage\n\n` +
+                         `## User Prompt\n${prompt}\n\n` +
+                         `## Generated Narrative (STUB)\n\n` +
+                         `This is placeholder content generated by the MVP scaffold.\n\n` +
+                         `In the ${stage} stage, the protagonist faces challenges that test their resolve. ` +
+                         `The journey continues through transformation and growth.\n\n` +
+                         `**Character Development:**\n` +
+                         `- Internal conflict deepens\n` +
+                         `- New relationships form\n` +
+                         `- Skills and wisdom increase\n\n` +
+                         `**Next Steps:**\n` +
+                         `1. Refine this narrative\n` +
+                         `2. Integrate with broader story arc\n` +
+                         `3. Adapt for platform-specific content\n\n` +
+                         `*[AI-generated content will appear here once backend integration is complete]*`
+            };
+            
+            // Display generated content
+            outputDiv.classList.remove('empty');
+            outputDiv.textContent = generatedContent.content;
+            
+            // Enable export buttons
+            document.getElementById('exportMarkdown').disabled = false;
+            document.getElementById('exportJson').disabled = false;
+            
+            // Re-enable generate button
+            generateBtn.disabled = false;
+            generateBtn.textContent = 'Generate Story';
+        });
+        
+        // Export as Markdown (client-side download)
+        document.getElementById('exportMarkdown').addEventListener('click', function() {
+            if (!generatedContent) return;
+            
+            const filename = `story-${generatedContent.stage}-${Date.now()}.md`;
+            const blob = new Blob([generatedContent.content], { type: 'text/markdown' });
+            downloadFile(blob, filename);
+        });
+        
+        // Export as JSON (client-side download)
+        document.getElementById('exportJson').addEventListener('click', function() {
+            if (!generatedContent) return;
+            
+            const filename = `story-${generatedContent.stage}-${Date.now()}.json`;
+            const jsonContent = JSON.stringify(generatedContent, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            downloadFile(blob, filename);
+        });
+        
+        // Helper function to trigger file download
+        function downloadFile(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Keyboard accessibility: Enter to submit form
+        document.getElementById('promptText').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                document.getElementById('storyForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

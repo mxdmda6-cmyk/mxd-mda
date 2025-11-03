@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MXD-MDA Production Dashboard - Track alchemical transmedia project tasks and dependencies">
+    <title>MXD-MDA Production Dashboard</title>
+    <style>
+        /* === README: Functionality Status === 
+         * This is a STUB/SCAFFOLD version for MVP foundation.
+         * Current state: Client-only with mock data, no backend integration.
+         * 
+         * Future enhancements (post-MVP):
+         * - Import task data from JSON files or API
+         * - Real-time dependency mapping with interactive visualization
+         * - Critical path calculation algorithm
+         * - Team member assignment and progress tracking
+         * - Integration with GitHub Projects/Issues
+         * - Milestone synchronization with alchemical-milestones.md
+         */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        h1 {
+            color: #34495e;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .mvp-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+        
+        .mvp-notice strong {
+            color: #856404;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .export-btn {
+            padding: 10px 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .export-btn:hover {
+            background: #229954;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .card h2 {
+            font-size: 1.3rem;
+            color: #34495e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-icon {
+            font-size: 1.5rem;
+        }
+        
+        .task-list {
+            list-style: none;
+        }
+        
+        .task-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid transparent;
+            background: #f8f9fa;
+            transition: all 0.2s;
+        }
+        
+        .task-item:hover {
+            background: #e9ecef;
+            transform: translateX(3px);
+        }
+        
+        .task-item.critical-path {
+            border-left-color: #e74c3c;
+            background: #ffeaea;
+        }
+        
+        .task-item.critical-path:hover {
+            background: #ffd4d4;
+        }
+        
+        .task-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .task-meta {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .task-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-todo {
+            background: #e8f4fd;
+            color: #1e88e5;
+        }
+        
+        .status-in-progress {
+            background: #fff8e1;
+            color: #f57c00;
+        }
+        
+        .status-done {
+            background: #e8f5e9;
+            color: #43a047;
+        }
+        
+        .status-blocked {
+            background: #ffebee;
+            color: #e53935;
+        }
+        
+        .dependency-map {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+        
+        .dependency-map h2 {
+            font-size: 1.5rem;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+        
+        .dependency-placeholder {
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #d0d0d0;
+            color: #7f8c8d;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-color.critical {
+            background: #e74c3c;
+        }
+        
+        .legend-color.normal {
+            background: #95a5a6;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .export-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Accessibility */
+        button:focus, .filter-btn:focus {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 MXD-MDA Production Dashboard</h1>
+            <p class="subtitle">Alchemical Transmedia Project Management</p>
+        </header>
+        
+        <div class="mvp-notice">
+            <strong>MVP Notice:</strong> This is a functional scaffold with mock data. 
+            Real task import, dependency visualization, and team tracking will be added in future sprints.
+        </div>
+        
+        <div class="controls">
+            <div class="filter-group" role="group" aria-label="Task category filters">
+                <button class="filter-btn active" data-category="all">All Tasks</button>
+                <button class="filter-btn" data-category="story">📖 Story</button>
+                <button class="filter-btn" data-category="tech">⚙️ Tech</button>
+                <button class="filter-btn" data-category="marketing">📢 Marketing</button>
+                <button class="filter-btn" data-category="community">👥 Community</button>
+            </div>
+            <button class="export-btn" id="exportCsv">Export CSV</button>
+        </div>
+        
+        <div class="dashboard-grid" id="taskGrid">
+            <!-- Task cards will be dynamically inserted here -->
+        </div>
+        
+        <div class="dependency-map">
+            <h2>Dependency Mapping</h2>
+            <div class="dependency-placeholder">
+                <p><strong>📐 Dependency Visualization (Coming Soon)</strong></p>
+                <p>Interactive dependency graph with critical path highlighting will be displayed here.</p>
+                <p>This will show task relationships, blockers, and the critical path for project completion.</p>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color critical"></div>
+                    <span>Critical Path</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color normal"></div>
+                    <span>Normal Task</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // === README: JavaScript Functionality ===
+        // Current implementation: Mock data for demonstration
+        // TODO (post-MVP): 
+        // - Load tasks from JSON file or API endpoint
+        // - Implement dependency graph visualization (D3.js or similar)
+        // - Add critical path calculation algorithm
+        // - Enable task editing and status updates
+        // - Sync with GitHub Issues/Projects
+        
+        // Mock task data
+        const mockTasks = [
+            {
+                id: 1,
+                title: "Complete Chapter 1: Calcination",
+                category: "story",
+                status: "in-progress",
+                assignee: "Writer Team",
+                dueDate: "2025-11-15",
+                criticalPath: true
+            },
+            {
+                id: 2,
+                title: "EPUB validation workflow setup",
+                category: "tech",
+                status: "done",
+                assignee: "Dev Team",
+                dueDate: "2025-11-10",
+                criticalPath: true
+            },
+            {
+                id: 3,
+                title: "Story Architect web tool",
+                category: "tech",
+                status: "done",
+                assignee: "Dev Team",
+                dueDate: "2025-11-10",
+                criticalPath: false
+            },
+            {
+                id: 4,
+                title: "Gemini API integration",
+                category: "tech",
+                status: "todo",
+                assignee: "Backend Team",
+                dueDate: "2025-11-20",
+                criticalPath: true
+            },
+            {
+                id: 5,
+                title: "AR QR code generation workflow",
+                category: "tech",
+                status: "todo",
+                assignee: "AR Team",
+                dueDate: "2025-12-05",
+                criticalPath: false
+            },
+            {
+                id: 6,
+                title: "TikTok content strategy",
+                category: "marketing",
+                status: "in-progress",
+                assignee: "Marketing Team",
+                dueDate: "2025-11-25",
+                criticalPath: false
+            },
+            {
+                id: 7,
+                title: "Instagram visual assets",
+                category: "marketing",
+                status: "todo",
+                assignee: "Design Team",
+                dueDate: "2025-11-30",
+                criticalPath: false
+            },
+            {
+                id: 8,
+                title: "Discord server setup",
+                category: "community",
+                status: "in-progress",
+                assignee: "Community Team",
+                dueDate: "2025-11-18",
+                criticalPath: false
+            },
+            {
+                id: 9,
+                title: "Community engagement rituals",
+                category: "community",
+                status: "todo",
+                assignee: "Community Team",
+                dueDate: "2025-12-01",
+                criticalPath: false
+            },
+            {
+                id: 10,
+                title: "Markdown→InDesign pipeline",
+                category: "tech",
+                status: "in-progress",
+                assignee: "Production Team",
+                dueDate: "2025-11-22",
+                criticalPath: true
+            }
+        ];
+        
+        let currentFilter = 'all';
+        
+        // Render tasks
+        function renderTasks(filter = 'all') {
+            const grid = document.getElementById('taskGrid');
+            grid.innerHTML = '';
+            
+            const categories = {
+                story: { icon: '📖', title: 'Story Development' },
+                tech: { icon: '⚙️', title: 'Technical' },
+                marketing: { icon: '📢', title: 'Marketing' },
+                community: { icon: '👥', title: 'Community' }
+            };
+            
+            // Group tasks by category
+            const grouped = {};
+            mockTasks.forEach(task => {
+                if (filter === 'all' || task.category === filter) {
+                    if (!grouped[task.category]) {
+                        grouped[task.category] = [];
+                    }
+                    grouped[task.category].push(task);
+                }
+            });
+            
+            // Render each category
+            Object.keys(grouped).forEach(category => {
+                const categoryInfo = categories[category];
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const taskListHtml = grouped[category].map(task => `
+                    <li class="task-item ${task.criticalPath ? 'critical-path' : ''}">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-meta">
+                            <span class="task-status status-${task.status.replace(' ', '-')}">
+                                ${task.status.toUpperCase().replace('-', ' ')}
+                            </span>
+                            <span>👤 ${task.assignee}</span>
+                            <span>📅 ${task.dueDate}</span>
+                            ${task.criticalPath ? '<span style="color: #e74c3c;">🔴 Critical</span>' : ''}
+                        </div>
+                    </li>
+                `).join('');
+                
+                card.innerHTML = `
+                    <h2>
+                        <span class="category-icon">${categoryInfo.icon}</span>
+                        ${categoryInfo.title}
+                    </h2>
+                    <ul class="task-list">
+                        ${taskListHtml}
+                    </ul>
+                `;
+                
+                grid.appendChild(card);
+            });
+            
+            // If no tasks match filter
+            if (Object.keys(grouped).length === 0) {
+                grid.innerHTML = '<div class="card"><p style="color: #7f8c8d;">No tasks match the selected filter.</p></div>';
+            }
+        }
+        
+        // Filter button handlers
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.category;
+                renderTasks(currentFilter);
+            });
+        });
+        
+        // CSV export functionality
+        document.getElementById('exportCsv').addEventListener('click', function() {
+            // Create CSV content
+            const headers = ['ID', 'Title', 'Category', 'Status', 'Assignee', 'Due Date', 'Critical Path'];
+            const rows = mockTasks.map(task => [
+                task.id,
+                `"${task.title}"`,
+                task.category,
+                task.status,
+                `"${task.assignee}"`,
+                task.dueDate,
+                task.criticalPath ? 'Yes' : 'No'
+            ]);
+            
+            const csv = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+            
+            // Trigger download
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mxd-mda-tasks-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+        
+        // Initial render
+        renderTasks();
+    </script>
+</body>
+</html>
