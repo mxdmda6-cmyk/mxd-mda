@@ -45,7 +45,18 @@ jobs:
         id: find-epubs
         run: |
           echo "Searching for EPUB files in docs/ and artifacts/ directories..."
-          EPUB_FILES=$(find docs/ artifacts/ -type f -name "*.epub" 2>/dev/null || true)
+          
+          # Check if directories exist and find EPUB files
+          EPUB_FILES=""
+          if [ -d "docs" ]; then
+            EPUB_FILES=$(find docs/ -type f -name "*.epub" 2>/dev/null || true)
+          fi
+          if [ -d "artifacts" ]; then
+            EPUB_FILES="$EPUB_FILES $(find artifacts/ -type f -name "*.epub" 2>/dev/null || true)"
+          fi
+          
+          # Trim whitespace
+          EPUB_FILES=$(echo "$EPUB_FILES" | xargs)
           
           if [ -z "$EPUB_FILES" ]; then
             echo "No EPUB files found to validate"

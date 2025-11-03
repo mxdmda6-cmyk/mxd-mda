@@ -98,8 +98,16 @@ check_java() {
         exit 1
     fi
     
-    local java_version=$(java -version 2>&1 | head -n1 | cut -d'"' -f2 | cut -d'.' -f1)
-    if [ "$java_version" -lt 11 ]; then
+    # Extract major version number (works for both old format "1.8.0" and new format "11.0.1")
+    local java_version=$(java -version 2>&1 | head -n1 | cut -d'"' -f2)
+    local major_version=$(echo "$java_version" | cut -d'.' -f1)
+    
+    # Handle old Java versioning (1.x.y format)
+    if [ "$major_version" = "1" ]; then
+        major_version=$(echo "$java_version" | cut -d'.' -f2)
+    fi
+    
+    if [ "$major_version" -lt 11 ]; then
         echo -e "${YELLOW}⚠ Warning: Java version may be too old (found: $java_version, recommended: 17+)${NC}"
     else
         echo -e "${GREEN}✓ Java found: $(java -version 2>&1 | head -n1)${NC}"

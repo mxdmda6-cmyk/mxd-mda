@@ -499,8 +499,8 @@
                     <li class="task-item ${task.criticalPath ? 'critical-path' : ''}">
                         <div class="task-title">${task.title}</div>
                         <div class="task-meta">
-                            <span class="task-status status-${task.status.replace(' ', '-')}">
-                                ${task.status.toUpperCase().replace('-', ' ')}
+                            <span class="task-status status-${task.status.replace(/\s+/g, '-')}">
+                                ${task.status.toUpperCase().replace(/-/g, ' ')}
                             </span>
                             <span>👤 ${task.assignee}</span>
                             <span>📅 ${task.dueDate}</span>
