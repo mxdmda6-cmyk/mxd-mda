@@ -1,0 +1,20 @@
+name: pr-ci
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  basic-ci:
+    name: Basic PR status check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Sanity check
+        run: |
+          echo "Repository checked out. Running minimal CI as a required status check."
+          git status
+          echo "OK"
