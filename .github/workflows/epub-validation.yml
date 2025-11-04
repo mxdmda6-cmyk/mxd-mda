@@ -1,0 +1,108 @@
+name: EPUB Validation
+
+on:
+  pull_request:
+    paths:
+      - '**.epub'
+      - 'docs/**'
+      - 'artifacts/**'
+      - '.github/workflows/epub-validation.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**.epub'
+      - 'docs/**'
+      - 'artifacts/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-epub:
+    name: Validate EPUB Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Download EPUBCheck
+        run: |
+          echo "Downloading EPUBCheck 5.1.0..."
+          wget -q https://github.com/w3c/epubcheck/releases/download/v5.1.0/epubcheck-5.1.0.zip
+          unzip -q epubcheck-5.1.0.zip
+          chmod +x epubcheck-5.1.0/epubcheck.jar
+          echo "EPUBCheck downloaded and ready"
+      
+      - name: Find EPUB files
+        id: find-epubs
+        run: |
+          echo "Searching for EPUB files in docs/ and artifacts/ directories..."
+          
+          # Check if directories exist and find EPUB files
+          EPUB_FILES=""
+          if [ -d "docs" ]; then
+            EPUB_FILES=$(find docs/ -type f -name "*.epub" 2>/dev/null || true)
+          fi
+          if [ -d "artifacts" ]; then
+            EPUB_FILES="$EPUB_FILES $(find artifacts/ -type f -name "*.epub" 2>/dev/null || true)"
+          fi
+          
+          # Trim whitespace
+          EPUB_FILES=$(echo "$EPUB_FILES" | xargs)
+          
+          if [ -z "$EPUB_FILES" ]; then
+            echo "No EPUB files found to validate"
+            echo "has_epubs=false" >> $GITHUB_OUTPUT
+          else
+            echo "Found EPUB files:"
+            echo "$EPUB_FILES"
+            echo "has_epubs=true" >> $GITHUB_OUTPUT
+            echo "$EPUB_FILES" > epub_files.txt
+          fi
+      
+      - name: Validate EPUB files
+        if: steps.find-epubs.outputs.has_epubs == 'true'
+        run: |
+          echo "Starting EPUB validation..."
+          VALIDATION_FAILED=0
+          
+          while IFS= read -r epub_file; do
+            if [ -n "$epub_file" ]; then
+              echo ""
+              echo "=========================================="
+              echo "Validating: $epub_file"
+              echo "=========================================="
+              
+              if java -jar epubcheck-5.1.0/epubcheck.jar "$epub_file"; then
+                echo "✓ Validation passed for $epub_file"
+              else
+                echo "✗ Validation FAILED for $epub_file"
+                VALIDATION_FAILED=1
+              fi
+            fi
+          done < epub_files.txt
+          
+          echo ""
+          echo "=========================================="
+          if [ $VALIDATION_FAILED -eq 0 ]; then
+            echo "✓ All EPUB files validated successfully!"
+            exit 0
+          else
+            echo "✗ One or more EPUB files failed validation"
+            echo "Please fix the validation errors before merging."
+            exit 1
+          fi
+      
+      - name: Skip validation (no EPUBs found)
+        if: steps.find-epubs.outputs.has_epubs == 'false'
+        run: |
+          echo "✓ No EPUB files to validate - skipping validation step"
+          echo "This is expected if no EPUB files exist yet in docs/ or artifacts/"

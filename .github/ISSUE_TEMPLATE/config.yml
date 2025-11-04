@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community Discord
+    url: https://discord.gg/mxd-mda
+    about: Join our community for discussions and support
+  - name: Documentation
+    url: https://github.com/mxdmda6-cmyk/mxd-mda/blob/main/README.md
+    about: Read the full documentation and guides
