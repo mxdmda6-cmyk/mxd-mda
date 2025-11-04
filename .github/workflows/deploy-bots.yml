@@ -1,0 +1,86 @@
+name: "Deploy Bots"
+
+# Deploys Discord bots to Fly.io when merged to main
+# Usage: Week 5+ when bots are ready for deployment
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/bots/**'
+      - 'requirements.txt'
+      - '.github/workflows/deploy-bots.yml'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy-lorekeeper:
+    name: Deploy Lorekeeper Bot
+    runs-on: ubuntu-latest
+    # Only run if bot code exists
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-lorekeeper]')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Fly.io CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      # Week 5: Uncomment when ready to deploy
+      # - name: Deploy to Fly.io
+      #   run: flyctl deploy --config fly.lorekeeper.toml
+      #   env:
+      #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Placeholder (Week 5)
+        run: |
+          echo "🤖 Lorekeeper deployment will be enabled in Week 5"
+          echo "📋 Prerequisites:"
+          echo "   1. Create Fly.io app: flyctl apps create mxd-lorekeeper"
+          echo "   2. Add fly.lorekeeper.toml configuration"
+          echo "   3. Set FLY_API_TOKEN secret in GitHub"
+          echo "   4. Uncomment deployment steps above"
+
+  deploy-social-alchemist:
+    name: Deploy Social Alchemist Bot
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-social]')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Week 6: Similar deployment steps
+      - name: Placeholder (Week 6)
+        run: |
+          echo "🤖 Social Alchemist deployment will be enabled in Week 6"
+
+  deploy-high-priestess:
+    name: Deploy High Priestess Bot
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-oracle]')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Week 7: Similar deployment steps
+      - name: Placeholder (Week 7)
+        run: |
+          echo "🤖 High Priestess deployment will be enabled in Week 7"
+
+  health-check:
+    name: Bot Health Check
+    runs-on: ubuntu-latest
+    needs: [deploy-lorekeeper, deploy-social-alchemist, deploy-high-priestess]
+    if: always()
+
+    steps:
+      - name: Check deployment status
+        run: |
+          echo "🔍 Checking bot health..."
+          echo "Week 5+: Will ping bot endpoints and verify status"
+
+      # Future: Actual health checks
+      # - name: Ping Lorekeeper
+      #   run: curl -f https://mxd-lorekeeper.fly.dev/health || exit 1
