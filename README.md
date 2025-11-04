@@ -1,325 +1,355 @@
-# 🜁 MXD-MDA: Strategic Operations Hub
+# 🜂 MXD-MDA TRANSMEDIA ORCHESTRATION SYSTEM
 
-**Turning Stories into Gold — A Transmedia Empire in the Making**
+```
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║          "Find Crow. Find Yourself."                          ║
+║                                                               ║
+║     Transform creative vision into manifested reality         ║
+║     through orchestrated storytelling across platforms        ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+```
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Status: Active Development](https://img.shields.io/badge/Status-Active%20Development-green.svg)]()
+**The Alchemical Engine for Transmedia Storytelling**
 
----
-
-## 🌟 What Is MXD-MDA?
-
-**MXD-MDA** (pronounced "mixed media") is a **transmedia creative ecosystem** that weaves interconnected narratives across multiple mediums — books, interactive experiences, AI agents, workshops, and community — blending esoteric knowledge with creative innovation to guide others on a journey of transformation.
-
-This repository serves as the **operational backbone** for the entire MXD-MDA universe.
-
----
-
-## 🎯 Mission
-
-**"Turn Your Story into Gold"**
-
-We guide storytellers, creators, and seekers through the alchemical process of transforming their lived experiences — especially pain, betrayal, and transformation — into creative gold.
+MXD-MDA is an AI-powered command center that synchronizes your entire creative empire across **6 core roles** and **10+ platforms**, turning raw creative potential into gold.
 
 ---
 
-## 📚 Current Active Projects
+## 🎭 THE VISION
 
-### 1. Where's Crow 🐦‍⬛ *(Priority: Q4 2025)*
-An interactive seek-and-find adventure book with digital MVP
+This isn't just a repository—it's a **living transformation system** that bridges:
 
-**Status:** Manuscript finalization, MVP in development
-**Target:** Kickstarter Q1 2026 ($75,000 goal)
-**Deliverables:**
-- Interactive book with Midnight Carnival scene
-- Kickstarter campaign
-- Email list (500 subscribers)
+- 📚 **Publishing** (Amazon KDP, Book of Skretz)
+- 🎮 **Interactive Experiences** (AR, puzzles, Midnight Carnival)
+- 👥 **Community** (Discord, social media engagement)
+- 💰 **Commerce** (Kickstarter, merchandise, courses)
+- 🤖 **AI Agents** (Lorekeeper, Oracle, Social Alchemist)
+- ✨ **Narrative Universe** (Where's Crow?, transmedia lore)
 
-📁 **[Production Checklist →](docs/projects/wheres-crow/PRODUCTION_CHECKLIST.md)**
-
----
-
-### 2. Book of Skretz 📖
-A poetry collection documenting transformation arcs
-
-**Status:** Poems exist in `/poems/`, publication planning phase
-**Target:** Q2 2026 publication
+**Current Status**: 🏗️ Foundation Phase (Week 1/12 of 90-day launch plan)
 
 ---
 
-### 3. Alchemical Nexus 🜁
-A multi-agent AI therapeutic system for creative guidance
+## ⚡ QUICK START
 
-**Status:** Design phase (Phase 2: 2027-2028)
-**Tech Stack:** FastAPI, Qdrant, LangChain, Gemini
+Get operational in **5 minutes**:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/[your-org]/mxd-mda.git
+cd mxd-mda
+
+# 2. Set up Python environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Configure your environment
+cp config/.env.example .env
+# Edit .env and add your API keys (see Configuration section)
+
+# 5. Test the orchestrator (coming in Week 2)
+python src/orchestrator/main.py dashboard
+```
+
+**Need help?** See [QUICK_START.md](docs/QUICK_START.md) for detailed setup.
 
 ---
 
-### 4. Heartbreak by Design 💔
-A personal transformation chronicle (The Catalyst Arc)
+## 🏗️ ARCHITECTURE
 
-**Status:** Documentation & manuscript in progress
-
----
-
-### 5. Creative Alchemy Workshops 🎓
-Community platform & courses for storytellers
-
-**Status:** Phase 2 planning (2027-2028)
-
----
-
-## 🗂️ Repository Structure
+### System Components
 
 ```
 mxd-mda/
-├── docs/                          # Strategic documentation (START HERE!)
-│   ├── PROJECT_MASTER_MAP.md      # Single source of truth for all locations
-│   ├── CONSOLIDATION_ROADMAP.md   # Infrastructure cleanup protocol
-│   ├── GETTING_STARTED.md         # New user guide
-│   ├── operations/                # Sprint calendars, reviews, risk register
-│   ├── projects/                  # Per-project production checklists
-│   ├── brand/                     # Brand Bible, voice, visual guidelines
-│   └── technical/                 # Tech stack, APIs, architecture
-├── src/                           # Source code
-│   ├── agents/                    # AI agent implementations
-│   ├── automation/                # Workflow scripts
-│   └── utils/                     # Shared utilities
-├── tests/                         # Test suites
-└── scripts/                       # Utility scripts
+├── src/
+│   ├── orchestrator/     # Core command center
+│   │   ├── dashboard.py           # Production dashboard (alchemical stages)
+│   │   ├── content_generator.py   # AI-powered content creation
+│   │   ├── platform_sync.py       # Multi-platform coordination
+│   │   └── analytics.py           # Metrics & KPI tracking
+│   ├── bots/             # AI agents for automation
+│   │   ├── lorekeeper/            # Discord lore bot
+│   │   ├── social_alchemist/      # Social media automation
+│   │   └── high_priestess/        # Oracle & daily prompts
+│   └── utils/            # Shared utilities
+├── config/               # Configuration & templates
+│   ├── .env.example               # Environment variables template
+│   └── platform_templates/        # Content templates per platform
+├── docs/                 # Comprehensive documentation
+│   ├── STRATEGIC_SYNTHESIS.md     # 90-day action plan
+│   ├── QUICK_START.md             # Get running in 60 minutes
+│   ├── CLAUDE_CODE_GUIDE.md       # Advanced AI automation
+│   └── BRANCHING.md               # Git workflow
+├── tests/                # Test suites
+└── scripts/              # Deployment & automation scripts
+```
+
+### The Six Roles
+
+This system serves **six creative functions**, unified in one command center:
+
+| Role | Capabilities | Status |
+|------|--------------|--------|
+| **🎬 Director of Production** | Asset pipeline, KDP publishing, project dashboards | Week 2 |
+| **✨ Co-Creator & Creative Dev** | AI lore generation, narrative consistency, quality assurance | Week 2 |
+| **📋 Project Manager** | Sprint tracking, milestone reports, risk management | Week 1 |
+| **🌐 Social Media & Community** | Content calendars, Discord bots, engagement analytics | Week 3 |
+| **📈 Marketing & Crowdfunding** | Kickstarter blueprints, email funnels, partnership mapping | Week 4 |
+| **🤖 Bot & Agent Architect** | Multi-agent orchestration, deployment automation | Week 5 |
+
+---
+
+## 🎨 KEY FEATURES
+
+### 🔮 AI-Powered Content Generation
+- **Claude AI Integration**: Generate on-brand lore, social posts, and essays
+- **Voice Adaptation**: Automatically adjust tone per platform (Instagram, TikTok, Discord)
+- **Batch Operations**: Create 30 days of content in 1 hour
+
+### 📊 Alchemical Dashboard
+Project tracking mapped to transformation stages:
+- **Prima Materia** → Raw ideas & concepts
+- **Dissolution** → Breaking down complexity
+- **Separation** → Focus on essentials
+- **Conjunction** → Uniting platforms
+- **Fermentation** → Community growth
+- **Distillation** → Refinement
+- **Coagulation** → Manifestation
+
+### 🤖 Autonomous Agent Network
+- **Lorekeeper Bot**: Curates fan theories, answers lore questions (Discord)
+- **Social Alchemist**: Schedules & adapts content across platforms
+- **High Priestess**: Daily catalytic prompts & oracle wisdom
+- **Nexus Sync**: Keeps Notion, Google Drive, and GitHub aligned
+
+### 📈 Campaign Orchestration
+- **Kickstarter Blueprints**: Complete campaign strategy with tiered rewards
+- **Email Sequences**: Automated funnel from awareness → conversion
+- **Launch Coordination**: Multi-platform synchronized releases
+
+---
+
+## 🌍 PLATFORM INTEGRATIONS
+
+Current & planned integrations:
+
+| Platform | Purpose | Status |
+|----------|---------|--------|
+| **Anthropic Claude** | Content generation, AI orchestration | ✅ Active |
+| **Google Gemini** | Multi-agent coordination | 🔜 Week 5 |
+| **Discord** | Community hub, Lorekeeper bot | 🔜 Week 3 |
+| **Notion** | Content database, project tracking | 🔜 Week 2 |
+| **Amazon KDP** | Book publishing (Where's Crow?) | 🎯 Week 2 |
+| **Beehiiv/Kit** | Email marketing automation | 🔜 Week 3 |
+| **Instagram/TikTok** | Visual storytelling & community | ✅ Partial |
+| **Buffer/Later** | Social media scheduling | 🔜 Week 4 |
+| **Fly.io** | Bot hosting & deployment | 🔜 Week 5 |
+| **Qdrant** | Vector search for semantic lore queries | 🔜 Week 6 |
+
+---
+
+## 📚 DOCUMENTATION
+
+### Core Guides
+- **[QUICK_START.md](docs/QUICK_START.md)** - Get running in 60 minutes
+- **[STRATEGIC_SYNTHESIS.md](docs/STRATEGIC_SYNTHESIS.md)** - Complete 90-day action plan
+- **[CLAUDE_CODE_GUIDE.md](docs/CLAUDE_CODE_GUIDE.md)** - Advanced AI automation
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute
+- **[SECURITY.md](SECURITY.md)** - Security policies & contact
+
+### API Documentation
+- **Orchestrator API**: `docs/API_ORCHESTRATOR.md` (coming Week 2)
+- **Bot Deployment**: `docs/DEPLOY_BOTS.md` (coming Week 5)
+- **Content Templates**: `docs/CONTENT_TEMPLATES.md` (coming Week 4)
+
+---
+
+## 🚀 ROADMAP
+
+### Phase 1: Foundation (Weeks 1-4)
+- [x] Repository structure & documentation
+- [ ] Core orchestrator implementation
+- [ ] Notion 3-database setup
+- [ ] Content generation engine
+- [ ] Basic analytics dashboard
+
+### Phase 2: Activation (Weeks 5-8)
+- [ ] Discord community launch
+- [ ] Lorekeeper bot deployment
+- [ ] Email automation sequences
+- [ ] Where's Crow? KDP publication
+- [ ] Social media content engine
+
+### Phase 3: Amplification (Weeks 9-12)
+- [ ] Kickstarter pre-campaign
+- [ ] Multi-agent orchestration (Gemini)
+- [ ] Advanced analytics & insights
+- [ ] Community engagement automation
+- [ ] Midnight Carnival MVP development
+
+### Phase 4: Transformation (Q2 2026+)
+- [ ] Full transmedia launch
+- [ ] AR experience integration
+- [ ] Creative Alchemy course platform
+- [ ] Revenue scaling ($0 → $64K/month by 2030)
+
+---
+
+## 🧪 DEVELOPMENT
+
+### Prerequisites
+- Python 3.10 or higher
+- Node.js 20+ (for some integrations)
+- Git LFS (for large assets)
+- API keys for: Anthropic, Discord, Notion (see Configuration)
+
+### Running Tests
+```bash
+# Unit tests
+pytest tests/
+
+# With coverage
+pytest --cov=src tests/
+
+# Specific test suite
+pytest tests/test_orchestrator.py -v
+```
+
+### Code Quality
+```bash
+# Format with Black
+black src/ tests/
+
+# Type checking with MyPy
+mypy src/
+
+# Linting with Ruff
+ruff check src/
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🔐 CONFIGURATION
 
-### For Strategic Planning:
-1. **Read:** [docs/PROJECT_MASTER_MAP.md](docs/PROJECT_MASTER_MAP.md) — Your compass
-2. **Check:** [docs/operations/Q4_2025_SPRINT_CALENDAR.md](docs/operations/Q4_2025_SPRINT_CALENDAR.md) — Today's focus
-3. **Review:** [docs/projects/wheres-crow/PRODUCTION_CHECKLIST.md](docs/projects/wheres-crow/PRODUCTION_CHECKLIST.md) — Current priorities
+### Environment Variables
 
-### For Developers:
-1. Clone the repo: `git clone [repo-url]`
-2. Review tech docs: `docs/technical/`
-3. Check agent code: `src/agents/`
+Copy `.env.example` to `.env` and configure:
 
-### For New Collaborators:
-1. **Start here:** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
-2. Read the Master Map to understand where everything lives
-3. Join the weekly review ritual (Fridays)
+```bash
+# Core AI Services
+ANTHROPIC_API_KEY=sk-ant-...        # Claude AI (required)
+GOOGLE_GEMINI_API_KEY=...           # Gemini (optional, Week 5)
 
----
+# Platform Integrations
+DISCORD_BOT_TOKEN=...               # Discord bot (Week 3)
+NOTION_API_KEY=...                  # Notion sync (Week 2)
+BEEHIIV_API_KEY=...                 # Email marketing (Week 3)
 
-## 📅 Current Timeline: Q4 2025
+# Database & Storage
+QDRANT_URL=...                      # Vector database (Week 6)
+SUPABASE_URL=...                    # PostgreSQL (optional)
 
-**Mission:** Launch Where's Crow MVP & Kickstarter Pre-Campaign
+# Cloud Hosting
+FLY_API_TOKEN=...                   # Bot deployment (Week 5)
+```
 
-**Days Remaining:** 59 days (as of Nov 2, 2025)
-
-**Key Milestones:**
-- ✅ **Nov 8:** Manuscript v1.0-FINAL
-- ✅ **Nov 15:** Art asset inventory complete
-- ✅ **Dec 20:** MVP v1.0 live and tested
-- ✅ **Dec 31:** Kickstarter campaign draft complete
-
-📆 **[Full Sprint Calendar →](docs/operations/Q4_2025_SPRINT_CALENDAR.md)**
+**Security Note**: Never commit `.env` files. Use GitHub Secrets for CI/CD.
 
 ---
 
-## 🎯 Q4 2025 OKRs
+## 🤝 CONTRIBUTING
 
-### Objective 1: Launch Where's Crow MVP
-- **KR1:** Complete manuscript to v1.0-FINAL → Target: 100% by Nov 8
-- **KR2:** Build playable Midnight Carnival scene → Target: 100% by Dec 20
-- **KR3:** Test with 20+ users → Target: 20 testers by Dec 20
+We welcome contributions from alchemists, storytellers, and technologists!
 
-### Objective 2: Kickstarter Pre-Launch
-- **KR1:** Draft complete campaign page → Target: 100% by Dec 31
-- **KR2:** Build email list to 500 subscribers → Target: 500 by Dec 31
-- **KR3:** Create campaign video script → Target: 100% by Dec 31
+### How to Contribute
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/your-feature`)
+3. **Commit** with alchemical messages (see [CONTRIBUTING.md](CONTRIBUTING.md))
+4. **Push** to your branch
+5. **Open** a Pull Request
 
-### Objective 3: Infrastructure Consolidation
-- **KR1:** Notion Master Hub operational → Target: 100% by Nov 8
-- **KR2:** Google Drive canonical structure → Target: 100% by Nov 8
-- **KR3:** Git repo clean & versioned → Target: 100% by Nov 15
+### Commit Message Style
+Follow alchemical transformation stages:
+```
+Prima Materia: Initial implementation of dashboard
+Dissolution: Refactor orchestrator into modules
+Conjunction: Integrate Discord bot with main system
+Coagulation: Deploy production release v1.0
+```
 
----
-
-## 🛠️ Tech Stack
-
-### Current Stack:
-- **Automation:** Make.com
-- **Backend:** FastAPI, Python
-- **AI/ML:** Gemini, LangChain
-- **Database:** Notion API, Qdrant (vector DB)
-- **Frontend:** HTML5, CSS3, JavaScript (MVP)
-- **Hosting:** GitHub Pages, Netlify
-- **Community:** Discord (planned)
-- **Email:** Beehiiv (planned)
-
-📄 **[Full Tech Documentation →](docs/technical/)** *(To be created)*
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
-## 🎨 Brand Identity
+## 🔮 COMMUNITY
 
-**Archetype:** Sage/Mystic + Creator/Alchemist
-**Mission:** Turn Your Story into Gold
-**Aesthetic:** Alchemical, mystical, transformation-focused
-**Color Palette:** Marigold orange, deep purple, midnight blue, gold accents
+Join the transformation:
 
-**Voice & Tone:**
-- **Teaching:** Clear, empowering, structured
-- **Storytelling:** Evocative, mystical, poetic
-- **Community:** Warm, inclusive, supportive
-- **Strategy:** Confident, analytical, decisive
-
-📖 **[Brand Bible →](docs/brand/)** *(To be created)*
+- **Discord**: [Coming Week 3] - Community hub & Lorekeeper bot
+- **Newsletter**: [Nexus Scroll](https://mxdmda.beehiiv.com) - Weekly mystical insights
+- **Instagram**: [@mxdmda](https://instagram.com/mxdmda) - Visual storytelling
+- **GitHub Issues**: Bug reports, feature requests, discussions
 
 ---
 
-## 🔄 Workflows
+## 📜 LICENSE
 
-### Daily Operations:
-1. Check [Q4 Sprint Calendar](docs/operations/Q4_2025_SPRINT_CALENDAR.md) for today's focus
-2. Update project checklists in real-time
-3. Commit code/docs regularly (push daily)
+This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
 
-### Weekly Reviews:
-Every Friday:
-1. Complete [Weekly Review Ritual](docs/operations/WEEKLY_REVIEW_TEMPLATE.md)
-2. Update sprint calendar & OKR progress
-3. Audit for duplicate folders/scattered assets
-4. Plan next week's priorities
+### Citation
 
-### Before Creating Anything New:
-1. **STOP** ⏸️
-2. **Check [PROJECT_MASTER_MAP.md](docs/PROJECT_MASTER_MAP.md)** first
-3. **Use existing canonical location** (or update map, THEN create)
+If you reference or build upon this work:
 
----
+```bibtex
+@software{mxd_mda_orchestrator,
+  author = {{MXD-MDA}},
+  title = {MXD-MDA Transmedia Orchestration System},
+  year = {2025},
+  url = {https://github.com/[your-org]/mxd-mda}
+}
+```
 
-## 🚨 Critical Rules
-
-1. **NO DUPLICATE FOLDERS** — Always check Master Map first
-2. **ONE SOURCE OF TRUTH** — If not in Master Map, it doesn't exist
-3. **VERSION EVERYTHING** — Use semantic versioning (v1.0, v1.1, etc.)
-4. **DOCUMENT AS YOU GO** — Don't batch; update in real-time
-5. **COMMIT FREQUENTLY** — Push to Git regularly, don't let local diverge
+See [CITATION.cff](CITATION.cff) for structured citation metadata.
 
 ---
 
-## 🤝 Contributing
+## 🙏 ACKNOWLEDGMENTS
 
-This is primarily a personal/solo creative endeavor, but collaboration is welcome!
+Built with:
+- **[Anthropic Claude](https://www.anthropic.com/)** - AI orchestration & content generation
+- **[Discord.py](https://discordpy.readthedocs.io/)** - Community bot framework
+- **[Notion API](https://developers.notion.com/)** - Database synchronization
+- **[Fly.io](https://fly.io/)** - Bot hosting infrastructure
 
-**If you'd like to contribute:**
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to branch: `git push origin feature/your-feature-name`
-5. Open a Pull Request
-
-**See:** [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines
+Inspired by the alchemical tradition and the belief that **transformation is possible**.
 
 ---
 
-## 📊 Project Status
+## ⸻ FINAL TRANSMISSION ⸻
 
-**Phase:** Foundation & Community (2025-2027)
-**Current Sprint:** Q4 2025 — Where's Crow MVP Launch
-**Overall Progress:** 🟡 On Track with Adjustments Needed
+```
+The Crow calls from the margins.
+The Carnival awaits at the threshold.
+The transformation begins NOW.
 
-**Timeline Pressure:** 🚨 High (59 days to Q4 deadline)
-**Resource Constraints:** 🟡 Moderate (Solo creator, limited time)
-**Risk Level:** 🟡 Medium (manageable with scope adjustments)
+"What was scattered shall be gathered.
+What was hidden shall be revealed.
+What was lead shall become gold."
+```
 
-📈 **[Full Risk Register →](docs/operations/)** *(To be created)*
+**Status**: 🏗️ Prima Materia Phase
+**Version**: 0.1.0-foundation
+**Last Updated**: 2025-11-04
 
----
-
-## 📞 Contact & Community
-
-**Creator:** MXD-MDA (Amber)
-
-**Platforms:** *(To be updated after launch)*
-- Discord: *(Coming Q1 2026)*
-- Email List: *(Beehiiv, launching Nov 2025)*
-- Website: *(Coming Q1 2026)*
-
-**Social Media:** *(To be added)*
+🜂
 
 ---
 
-## 📄 License
-
-Licensed under [MIT License](LICENSE).
-
-Feel free to use this structure and approach for your own creative operations!
-
----
-
-## 🔮 Vision: The 5-Year Roadmap
-
-### Phase 1: Foundation & Community (2025-2027)
-- Launch Where's Crow (book + MVP)
-- Build engaged community (Discord, email list)
-- Establish brand presence
-- Publish Book of Skretz
-
-### Phase 2: Expansion & Technology (2027-2028)
-- Launch Alchemical Nexus AI system
-- Develop Creative Case Manager (CCM Agent)
-- Offer workshops & courses
-- Revenue: $2,500-7,000/month
-
-### Phase 3: Empire & Automation (2029-2030)
-- Full multi-agent ecosystem operational
-- Automated community management
-- Multiple revenue streams
-- Scale to full-time creative business
-
-🗺️ **[Full Roadmap →](docs/operations/)** *(To be documented)*
-
----
-
-## 🜁 Philosophy
-
-**"From Chaos to Gold"**
-
-This isn't about perfection — it's about:
-- ✨ **Clarity** over confusion
-- 🔥 **Momentum** over martyrdom
-- 📈 **Progress** over perfection
-- ⚙️ **Systems** over scrambling
-
-We're not just building projects; we're practicing **operational alchemy** — turning scattered ideas and painful experiences into tangible, valuable gold.
-
----
-
-## 🎉 Recent Milestones
-
-**November 2, 2025:**
-- ✅ Strategic infrastructure created (Master Map, Sprint Calendar, Consolidation Roadmap)
-- ✅ Repository reorganized for operational clarity
-- ✅ Where's Crow production checklist established
-- ✅ Q4 2025 timeline locked
-
-**Next Milestone:** November 8, 2025 — Infrastructure consolidation complete
-
----
-
-## ⏭️ Next Steps
-
-1. **Read:** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
-2. **Check:** [docs/PROJECT_MASTER_MAP.md](docs/PROJECT_MASTER_MAP.md)
-3. **Start:** [docs/operations/Q4_2025_SPRINT_CALENDAR.md](docs/operations/Q4_2025_SPRINT_CALENDAR.md)
-
----
-
-**"Welcome to the forge. Let's turn your story into gold."** 🜁
-
----
-
-*Last Updated: November 2, 2025*
-*Repository Version: 2.0 (Strategic Infrastructure Reorganization)*
+**Ready to begin?** → Start with [QUICK_START.md](docs/QUICK_START.md)
+**Need strategy?** → Read [STRATEGIC_SYNTHESIS.md](docs/STRATEGIC_SYNTHESIS.md)
+**Want automation?** → Explore [CLAUDE_CODE_GUIDE.md](docs/CLAUDE_CODE_GUIDE.md)
