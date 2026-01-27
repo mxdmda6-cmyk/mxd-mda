@@ -1,0 +1,10 @@
+services:
+  wisdom-node:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+      - ./pathways:/app/pathways
+    environment:
+      - DATABASE_URL=sqlite:///./backend/wisdom.db

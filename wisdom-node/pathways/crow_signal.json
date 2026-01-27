@@ -1,0 +1,12 @@
+{
+  "id": "crow_signal_v0",
+  "name": "Crow Signal → Publish → Remember",
+  "description": "Classify archetype (Crow), decide publish/schedule/hold, then log the run.",
+  "steps": [
+    { "id": "extract", "type": "extract_text" },
+    { "id": "classify", "type": "classify_archetype", "params": { "default": "Crow" } },
+    { "id": "route", "type": "route_action" },
+    { "id": "act", "type": "publish_stub" },
+    { "id": "log", "type": "log_run" }
+  ]
+}
