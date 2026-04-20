@@ -1,0 +1,331 @@
+# ═══════════════════════════════════════════════════════════════
+# MXD-MDA AUTOMATION CONFIG — Single Source of Truth
+# ═══════════════════════════════════════════════════════════════
+#
+# All values here propagate automatically into:
+#   - Minnesota Articles of Organization PDF
+#   - Operating Agreement PDF
+#   - IRS SS-4 (EIN Application) PDF
+#   - GitHub repository structure, issues, and milestones
+#
+# SECURITY RULES:
+#   • Never commit real SSNs, EINs, or API keys to this file.
+#   • Sensitive fields (ssn_or_itin) use placeholders; fill them
+#     only at signing time in a local copy that is .gitignored.
+#   • API keys live exclusively in the .env file (see .env.example).
+#
+# USAGE:
+#   python main.py --config automation/config.yaml [--llc] [--github]
+# ═══════════════════════════════════════════════════════════════
+
+# ── Entity Identity ─────────────────────────────────────────────
+entity:
+  name: "MXD-MDA LLC"
+  type: "Limited Liability Company"
+  state: "Minnesota"
+
+  # Minnesota Secretary of State requires a registered agent with a
+  # physical MN address (no P.O. boxes). Update before filing.
+  registered_agent:
+    name: "Jane Doe"
+    address: "123 Main Street"
+    city: "Minneapolis"
+    state: "MN"
+    zip: "55401"
+
+  # Principal place of business (can differ from registered agent)
+  principal_office:
+    address: "456 Creative Avenue, Suite 200"
+    city: "Saint Paul"
+    state: "MN"
+    zip: "55102"
+
+  # Person signing the Articles of Organization
+  organizer:
+    name: "Jane Doe"
+    title: "Organizer / Managing Member"
+    address: "123 Main Street, Minneapolis, MN 55401"
+
+# ── LLC Members ─────────────────────────────────────────────────
+# Each member entry generates an Operating Agreement signature block
+# and ownership table row.  Percentages must sum to 100.
+members:
+  - name: "Jane Doe"
+    title: "Managing Member"
+    ownership_percentage: 60
+    address: "123 Main Street, Minneapolis, MN 55401"
+    # ssn_last4 is only used for document verification footers.
+    # Never store full SSN here — leave as XXXX.
+    ssn_last4: "XXXX"
+
+  - name: "John Smith"
+    title: "Member"
+    ownership_percentage: 40
+    address: "789 Oak Street, Duluth, MN 55802"
+    ssn_last4: "XXXX"
+
+# ── IRS SS-4 / EIN Application Data ────────────────────────────
+# This section auto-fills the EIN application PDF.
+# The responsible_party.ssn_or_itin field is a placeholder;
+# fill it only in a local, .gitignored copy of this file.
+ein_application:
+  responsible_party:
+    name: "Jane Doe"
+    ssn_or_itin: "XXX-XX-XXXX"   # <<< FILL LOCALLY — NEVER COMMIT <<<
+
+  reason_for_applying: "Started new business"
+  # ISO date format YYYY-MM-DD
+  business_start_date: "2025-01-15"
+  fiscal_year_end_month: "December"
+  # Number of employees expected in next 12 months (0 = none)
+  expected_employees: 0
+  # IRS principal industry classification
+  principal_activity: "Arts and Entertainment"
+  specific_products_services: >
+    Transmedia storytelling, digital art production, interactive narrative
+    design, esoteric lore development, and cross-platform media integration.
+
+# ── GitHub Integration ──────────────────────────────────────────
+# Controls how repos, labels, milestones, and issues are created.
+github:
+  # Your GitHub org or personal username
+  org_or_user: "mxdmda6-cmyk"
+
+  # All auto-created repos will be prefixed with this string
+  project_prefix: "MXD-MDA"
+
+  # Repo visibility: "public" or "private"
+  visibility: "private"
+
+  # Labels created in every new project repo.
+  # Colors are 6-digit hex WITHOUT the leading #.
+  default_labels:
+    - name: "compliance"
+      color: "e4e669"
+      description: "LLC docs, state filing, legal deadlines"
+    - name: "branding"
+      color: "7057ff"
+      description: "Visual identity, Layered Nexus system, tone guides"
+    - name: "narrative"
+      color: "d4c5f9"
+      description: "Transmedia story alignment, esoteric lore continuity"
+    - name: "development"
+      color: "0075ca"
+      description: "Technical infrastructure, APIs, integrations"
+    - name: "supabase"
+      color: "3ECF8E"
+      description: "Database schema, Supabase setup, backend tasks"
+    - name: "staging"
+      color: "f9d0c4"
+      description: "Staging environment config and smoke tests"
+    - name: "blocked"
+      color: "d73a4a"
+      description: "Cannot proceed — dependency or decision needed"
+
+  # Milestones created in every new project repo.
+  milestones:
+    - title: "Phase 0 — Legal Foundation"
+      description: "LLC formation complete, EIN received, operating agreement signed."
+      due_weeks_from_now: 4
+
+    - title: "Phase 1 — Brand & Narrative Lock"
+      description: "Layered Nexus visual identity approved, transmedia bible drafted."
+      due_weeks_from_now: 8
+
+    - title: "Phase 2 — Infrastructure Ready"
+      description: "Supabase schema live, staging env passing smoke tests."
+      due_weeks_from_now: 12
+
+    - title: "Phase 3 — Project Launch"
+      description: "All platforms integrated, first public release shipped."
+      due_weeks_from_now: 20
+
+  # Pre-populated issues created in every new project repo.
+  # Each issue maps to a label and milestone by title.
+  issues:
+    # ── Compliance Track ──
+    - title: "Draft and file Minnesota Articles of Organization"
+      body: |
+        ## Task
+        Use the automation script to generate the pre-filled PDF, then file online:
+        https://www.sos.state.mn.us/business-liens/business-forms-fees/limited-liability-company-forms/
+
+        ## Checklist
+        - [ ] Run `python main.py --llc` to generate Articles of Organization PDF
+        - [ ] Review all fields for accuracy
+        - [ ] File with MN Secretary of State (fee: $155 online)
+        - [ ] Save confirmation number to this issue as a comment
+      labels: ["compliance"]
+      milestone: "Phase 0 — Legal Foundation"
+
+    - title: "Obtain EIN from IRS (SS-4)"
+      body: |
+        ## Task
+        Complete and submit the IRS SS-4 form. The automation script generates
+        a pre-filled version for review.
+
+        ## Checklist
+        - [ ] Run `python main.py --llc` to generate SS-4 PDF
+        - [ ] Verify responsible party information with legal counsel
+        - [ ] Apply online at https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online
+        - [ ] Record EIN in password manager (never in this repo)
+      labels: ["compliance"]
+      milestone: "Phase 0 — Legal Foundation"
+
+    - title: "Execute Operating Agreement (all members)"
+      body: |
+        ## Task
+        Review and sign the generated Operating Agreement PDF.
+
+        ## Checklist
+        - [ ] Run `python main.py --llc` to generate Operating Agreement
+        - [ ] Distribute to all members for review
+        - [ ] Collect wet or DocuSign signatures
+        - [ ] Store executed copy in secure shared drive
+        - [ ] Update issue with execution date
+      labels: ["compliance"]
+      milestone: "Phase 0 — Legal Foundation"
+
+    - title: "Open business bank account"
+      body: |
+        ## Task
+        Open a dedicated LLC bank account after EIN is received.
+
+        ## Checklist
+        - [ ] Gather: Articles of Organization, Operating Agreement, EIN letter
+        - [ ] Research MN credit unions vs. online business banks
+        - [ ] Open account and record routing/account numbers in password manager
+        - [ ] Set up accounting software (e.g., Wave, QuickBooks)
+      labels: ["compliance"]
+      milestone: "Phase 0 — Legal Foundation"
+
+    # ── Branding & Narrative Track ──
+    - title: "Finalize Layered Nexus visual identity system"
+      body: |
+        ## Task
+        Implement the Layered Nexus brand system across all project touchpoints.
+
+        ## Deliverables
+        - Primary / secondary color palette (hex + CMYK values)
+        - Typography stack (display, body, mono)
+        - Logo variants: full, mark-only, reversed
+        - Brand usage guidelines document
+
+        ## Checklist
+        - [ ] Define Layered Nexus color system
+        - [ ] Select and license typefaces
+        - [ ] Create logo SVG master files
+        - [ ] Export asset kit (PNG, SVG, PDF at multiple sizes)
+        - [ ] Write brand usage doc
+      labels: ["branding"]
+      milestone: "Phase 1 — Brand & Narrative Lock"
+
+    - title: "Write transmedia story bible v1"
+      body: |
+        ## Task
+        Document the canonical narrative layer that spans all MXD-MDA platforms.
+
+        ## Required Sections
+        - World overview and cosmology
+        - Character roster with platform appearances
+        - Timeline of in-world events
+        - Esoteric lore glossary (symbols, factions, artifacts)
+        - Cross-platform continuity rules
+
+        ## Checklist
+        - [ ] Outline world overview
+        - [ ] Complete character roster
+        - [ ] Draft event timeline
+        - [ ] Write lore glossary (minimum 20 entries)
+        - [ ] Define cross-platform canon rules
+        - [ ] Peer-review for internal consistency
+      labels: ["narrative"]
+      milestone: "Phase 1 — Brand & Narrative Lock"
+
+    - title: "Esoteric lore consistency audit"
+      body: |
+        ## Task
+        Cross-check all published and drafted content for lore consistency.
+
+        ## Checklist
+        - [ ] Compile existing content inventory
+        - [ ] Map each piece to the story bible
+        - [ ] Flag contradictions or retcons
+        - [ ] Resolve all flagged items
+        - [ ] Document canon decisions in story bible appendix
+      labels: ["narrative"]
+      milestone: "Phase 1 — Brand & Narrative Lock"
+
+    # ── Development Track ──
+    - title: "Initialize Supabase project and database schema"
+      body: |
+        ## Task
+        Set up the Supabase backend for this project.
+
+        ## Checklist
+        - [ ] Create project at https://supabase.com
+        - [ ] Configure environment variables in `.env` (never commit)
+        - [ ] Run initial schema migration (`supabase db push`)
+        - [ ] Enable Row-Level Security on all tables
+        - [ ] Create service-role and anon key policies
+        - [ ] Test connection from staging environment
+        - [ ] Document schema in `docs/database-schema.md`
+      labels: ["development", "supabase"]
+      milestone: "Phase 2 — Infrastructure Ready"
+
+    - title: "Configure staging environment"
+      body: |
+        ## Task
+        Stand up a staging environment for cross-platform integration testing.
+
+        ## Checklist
+        - [ ] Provision staging server / container
+        - [ ] Set all required env vars (see `.env.example`)
+        - [ ] Deploy latest main branch build
+        - [ ] Run smoke test suite
+        - [ ] Configure domain / subdomain for staging URL
+        - [ ] Document staging access in team wiki
+      labels: ["development", "staging"]
+      milestone: "Phase 2 — Infrastructure Ready"
+
+    - title: "Integrate digital art repository"
+      body: |
+        ## Task
+        Connect the digital art asset repository to the main platform.
+
+        ## Checklist
+        - [ ] Decide storage backend (Supabase Storage vs. S3-compatible)
+        - [ ] Set up asset ingestion pipeline
+        - [ ] Tag assets with lore metadata
+        - [ ] Expose asset API endpoint
+        - [ ] Write integration tests
+      labels: ["development"]
+      milestone: "Phase 3 — Project Launch"
+
+    - title: "Cross-platform integration smoke tests"
+      body: |
+        ## Task
+        Verify that all integrated platforms communicate correctly before launch.
+
+        ## Platforms to Test
+        - Web app ↔ Supabase
+        - Discord bot ↔ API
+        - Social publishing pipeline
+        - Digital art repository
+
+        ## Checklist
+        - [ ] Write smoke test script for each integration
+        - [ ] Run full suite in staging
+        - [ ] Fix all failures
+        - [ ] Document results in CI
+      labels: ["development", "staging"]
+      milestone: "Phase 3 — Project Launch"
+
+# ── Output Settings ─────────────────────────────────────────────
+output:
+  # Generated PDFs land here. Path is relative to the project root.
+  # Add /output to .gitignore to keep docs off of version control.
+  directory: "./output/documents"
+
+  # PDF page margins in millimeters
+  pdf_margin_mm: 20
