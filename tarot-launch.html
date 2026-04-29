@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="MXD-MDA — The Arcana Set. A 3-card collector drop: The Moonchaser, The Alchemist, The Transformation. Shadow. Memory. Vision. Purpose."/>
+<title>MXD-MDA — The Arcana Set</title>
+<style>
+/* =============================================
+   BASE
+   ============================================= */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --ink:       #0a0812;
+  --deep:      #100d1a;
+  --surface:   #17122a;
+  --lift:      #211840;
+  --gold:      #d4a843;
+  --gold-light:#f0cc78;
+  --gold-dim:  #8a6a22;
+  --violet:    #8d6bff;
+  --violet-dim:#5a3fcc;
+  --violet-glow:rgba(141,107,255,.18);
+  --cream:     #f2e9d8;
+  --muted:     #9a8fa8;
+  --radius:    18px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* =============================================
+   STARFIELD
+   ============================================= */
+#starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =============================================
+   LAYOUT
+   ============================================= */
+.page { position: relative; z-index: 1; }
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* =============================================
+   NAV
+   ============================================= */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 18px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(10,8,18,.9) 0%, transparent 100%);
+  backdrop-filter: blur(4px);
+}
+
+.nav-logo {
+  font-size: .85rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color .3s;
+}
+
+.nav-links a:hover { color: var(--cream); }
+
+/* =============================================
+   HERO
+   ============================================= */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative;
+}
+
+.hero-eyebrow {
+  font-size: .75rem;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  opacity: .9;
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 40%, var(--gold-dim) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--muted);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.hero-divider {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin: 0 auto 32px;
+}
+
+.hero-tagline {
+  font-size: 1.1rem;
+  color: var(--cream);
+  max-width: 560px;
+  opacity: .85;
+  margin-bottom: 48px;
+  font-style: italic;
+}
+
+.hero-flagship {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 64px;
+}
+
+.flagship-card {
+  width: min(320px, 80vw);
+  border-radius: var(--radius);
+  border: 3px solid var(--gold);
+  box-shadow:
+    0 0 60px rgba(212,168,67,.3),
+    0 0 120px rgba(212,168,67,.1),
+    inset 0 0 30px rgba(0,0,0,.4);
+  animation: float 6s ease-in-out infinite;
+  display: block;
+}
+
+.flagship-card-placeholder {
+  width: min(320px, 80vw);
+  aspect-ratio: 3/5;
+  border-radius: var(--radius);
+  border: 3px solid var(--gold);
+  background: linear-gradient(180deg, #25183d 0%, #100d18 100%);
+  box-shadow:
+    0 0 60px rgba(212,168,67,.3),
+    0 0 120px rgba(212,168,67,.1);
+  animation: float 6s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.flagship-card-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(212,168,67,.3);
+  border-radius: 12px;
+}
+
+.placeholder-numeral {
+  font-size: 2.5rem;
+  color: var(--gold);
+  letter-spacing: 4px;
+}
+
+.placeholder-symbol {
+  font-size: 5rem;
+}
+
+.placeholder-name {
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.placeholder-sub {
+  font-size: .7rem;
+  letter-spacing: 3px;
+  color: var(--muted);
+}
+
+.flagship-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--ink);
+  font-size: .65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-14px); }
+}
+
+.scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: .7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.scroll-cue-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--gold-dim), transparent);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: .5; }
+  50%       { opacity: 1; }
+}
+
+/* =============================================
+   SECTION HEADERS
+   ============================================= */
+.section-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.section-label {
+  font-size: .7rem;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+
+.section-rule {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  margin: 0 auto;
+}
+
+/* =============================================
+   THE ARCANA SET — THREE CARDS
+   ============================================= */
+.arcana-section {
+  padding: 100px 0;
+  background: linear-gradient(to bottom, var(--ink) 0%, var(--deep) 50%, var(--ink) 100%);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.card-item.featured {
+  transform: translateY(-24px);
+}
+
+.card-wrapper {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+}
+
+.card-wrapper:hover .card-img,
+.card-wrapper:hover .card-placeholder {
+  transform: scale(1.03) translateY(-6px);
+  box-shadow:
+    0 0 50px rgba(212,168,67,.4),
+    0 0 100px rgba(212,168,67,.15);
+}
+
+.card-img {
+  width: 100%;
+  border-radius: var(--radius);
+  border: 3px solid var(--gold-dim);
+  transition: transform .4s ease, box-shadow .4s ease;
+  display: block;
+  box-shadow: 0 8px 40px rgba(0,0,0,.6);
+}
+
+.card-placeholder {
+  width: 100%;
+  aspect-ratio: 3/5;
+  border-radius: var(--radius);
+  border: 3px solid var(--gold-dim);
+  transition: transform .4s ease, box-shadow .4s ease;
+  box-shadow: 0 8px 40px rgba(0,0,0,.6);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.card-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(212,168,67,.2);
+  border-radius: 12px;
+}
+
+.card-placeholder.moonchaser {
+  background: linear-gradient(160deg, #1a1035 0%, #0e1628 40%, #0d0b14 100%);
+}
+
+.card-placeholder.alchemist {
+  background: linear-gradient(160deg, #0f1a12 0%, #121020 40%, #0d0b14 100%);
+}
+
+.card-placeholder.transformation {
+  background: linear-gradient(160deg, #1a1208 0%, #141020 40%, #0d0b14 100%);
+}
+
+.ph-numeral {
+  font-size: 1.4rem;
+  color: var(--gold);
+  letter-spacing: 3px;
+}
+
+.ph-glyph { font-size: 3.5rem; }
+
+.ph-name {
+  font-size: .85rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  padding: 0 12px;
+}
+
+.ph-brand {
+  font-size: .6rem;
+  letter-spacing: 3px;
+  color: var(--muted);
+}
+
+.card-glow-featured {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse at center, rgba(212,168,67,.12) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.featured-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--ink);
+  font-size: .6rem;
+  letter-spacing: 3px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.card-info {
+  width: 100%;
+  padding: 20px 4px 0;
+  text-align: center;
+}
+
+.card-numeral {
+  font-size: .7rem;
+  letter-spacing: 4px;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.card-name {
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 10px;
+}
+
+.card-tagline {
+  font-size: .82rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.card-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.keyword {
+  font-size: .6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  border: 1px solid rgba(212,168,67,.25);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+/* =============================================
+   LORE SECTION
+   ============================================= */
+.lore-section {
+  padding: 100px 0;
+  background: var(--ink);
+}
+
+.lore-grid {
+  display: grid;
+  gap: 48px;
+}
+
+.lore-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+  align-items: center;
+  padding: 40px;
+  background: var(--surface);
+  border: 1px solid rgba(212,168,67,.12);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+
+.lore-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(to bottom, var(--gold), var(--gold-dim), transparent);
+}
+
+.lore-item:nth-child(even) {
+  grid-template-columns: 2fr 1fr;
+}
+
+.lore-item:nth-child(even) .lore-image-col {
+  order: 2;
+}
+
+.lore-item:nth-child(even) .lore-text-col {
+  order: 1;
+}
+
+.lore-mini-card {
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto;
+  border-radius: 14px;
+  border: 2px solid var(--gold-dim);
+  box-shadow: 0 4px 24px rgba(0,0,0,.5);
+  display: block;
+}
+
+.lore-mini-placeholder {
+  width: 100%;
+  max-width: 200px;
+  aspect-ratio: 3/5;
+  margin: 0 auto;
+  border-radius: 14px;
+  border: 2px solid var(--gold-dim);
+  box-shadow: 0 4px 24px rgba(0,0,0,.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.lore-mini-placeholder.moonchaser {
+  background: linear-gradient(160deg, #1a1035 0%, #0e1628 40%, #0d0b14 100%);
+}
+
+.lore-mini-placeholder.alchemist {
+  background: linear-gradient(160deg, #0f1a12 0%, #121020 40%, #0d0b14 100%);
+}
+
+.lore-mini-placeholder.transformation {
+  background: linear-gradient(160deg, #1a1208 0%, #141020 40%, #0d0b14 100%);
+}
+
+.lore-mini-glyph { font-size: 2.5rem; }
+
+.lore-mini-name {
+  font-size: .65rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.lore-number {
+  font-size: 4rem;
+  color: rgba(212,168,67,.08);
+  letter-spacing: 4px;
+  position: absolute;
+  top: 20px; right: 24px;
+  line-height: 1;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.lore-label {
+  font-size: .65rem;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.lore-title {
+  font-size: 1.6rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+
+.lore-body {
+  font-size: .95rem;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.lore-phrases {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lore-phrase {
+  font-size: .8rem;
+  font-style: italic;
+  color: rgba(212,168,67,.7);
+}
+
+.lore-phrase::before { content: '— '; }
+
+/* =============================================
+   TICKET / ADMIT ONE
+   ============================================= */
+.ticket-section {
+  padding: 100px 0;
+  background: linear-gradient(to bottom, var(--ink) 0%, var(--deep) 100%);
+}
+
+.ticket-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.ticket {
+  background: var(--surface);
+  border: 2px solid var(--gold-dim);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 80px rgba(212,168,67,.12);
+}
+
+.ticket-top {
+  padding: 40px 48px;
+  border-bottom: 2px dashed rgba(212,168,67,.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.ticket-brand { font-size: 2rem; letter-spacing: 6px; text-transform: uppercase; color: var(--gold); }
+.ticket-brand-sub { font-size: .65rem; letter-spacing: 4px; color: var(--muted); margin-top: 4px; }
+
+.ticket-admit {
+  text-align: right;
+  font-size: .65rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ticket-admit strong {
+  display: block;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.ticket-body {
+  padding: 36px 48px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.ticket-set-name {
+  font-size: 1.5rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+
+.ticket-set-desc {
+  font-size: .85rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.ticket-divider-v {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+}
+
+.ticket-cards-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: right;
+}
+
+.ticket-cards-list li {
+  font-size: .78rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ticket-cards-list li span {
+  color: var(--gold);
+  margin-left: 8px;
+}
+
+.ticket-bottom {
+  padding: 28px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,.2);
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.ticket-axioms {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.axiom {
+  font-size: .65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+.ticket-serial {
+  font-size: .65rem;
+  letter-spacing: 4px;
+  color: rgba(212,168,67,.4);
+  font-family: monospace;
+}
+
+/* =============================================
+   LAUNCH BUTTON
+   ============================================= */
+.launch-section {
+  padding: 80px 0 120px;
+  text-align: center;
+  background: var(--deep);
+}
+
+.launch-headline {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 12px;
+}
+
+.launch-sub {
+  font-size: .9rem;
+  color: var(--muted);
+  margin-bottom: 40px;
+  font-style: italic;
+}
+
+.btn-launch {
+  display: inline-block;
+  padding: 18px 48px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dim) 100%);
+  color: var(--ink);
+  font-size: .9rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  box-shadow: 0 0 40px rgba(212,168,67,.3);
+  transition: all .3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-launch::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.12);
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.btn-launch:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 60px rgba(212,168,67,.5);
+}
+
+.btn-launch:hover::before { opacity: 1; }
+
+.btn-launch:active { transform: translateY(0); }
+
+.launch-notify {
+  margin-top: 24px;
+  font-size: .75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#launch-status {
+  display: none;
+  margin-top: 28px;
+  padding: 16px 32px;
+  background: rgba(212,168,67,.08);
+  border: 1px solid rgba(212,168,67,.25);
+  border-radius: 12px;
+  font-size: .9rem;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeIn .5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+footer {
+  padding: 40px 24px;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,.04);
+}
+
+.footer-logo { font-size: 1rem; letter-spacing: 6px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 8px; }
+.footer-motto { font-size: .7rem; letter-spacing: 3px; color: var(--muted); font-style: italic; }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .cards-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .cards-grid .card-item:last-child { grid-column: 1 / -1; max-width: 320px; margin: 0 auto; }
+  .card-item.featured { transform: none; }
+  .lore-item,
+  .lore-item:nth-child(even) { grid-template-columns: 1fr; }
+  .lore-item:nth-child(even) .lore-image-col,
+  .lore-item:nth-child(even) .lore-text-col { order: unset; }
+  .lore-mini-placeholder, .lore-mini-card { max-width: 140px; }
+  .ticket-top, .ticket-body, .ticket-bottom { padding: 24px; }
+  .ticket-body { grid-template-columns: 1fr; }
+  .ticket-divider-v { width: 80px; height: 1px; }
+  .ticket-cards-list { text-align: left; }
+  .ticket-admit { text-align: left; }
+}
+
+@media (max-width: 600px) {
+  .cards-grid { grid-template-columns: 1fr; }
+  .cards-grid .card-item:last-child { grid-column: unset; max-width: 100%; }
+  nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =============== STARFIELD =============== -->
+<canvas id="starfield"></canvas>
+
+<div class="page">
+
+  <!-- =============== NAV =============== -->
+  <nav>
+    <a class="nav-logo" href="#">MXD — MDA</a>
+    <ul class="nav-links">
+      <li><a href="#arcana">The Cards</a></li>
+      <li><a href="#lore">Lore</a></li>
+      <li><a href="#collect">Collect</a></li>
+    </ul>
+  </nav>
+
+  <!-- =============== HERO =============== -->
+  <section class="hero">
+    <p class="hero-eyebrow">MXD – MDA · First Release</p>
+    <h1 class="hero-title">The Arcana<br>Set</h1>
+    <p class="hero-sub">Shadow · Memory · Vision · Purpose</p>
+    <div class="hero-divider"></div>
+    <p class="hero-tagline">"Not lost — just becoming."</p>
+
+    <!-- Flagship card -->
+    <div class="hero-flagship">
+      <div class="flagship-badge">Flagship · v01</div>
+      <img
+        src="assets/cards/moonchaser.jpg"
+        alt="The Moonchaser — MXD-MDA"
+        class="flagship-card"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      />
+      <div class="flagship-card-placeholder" style="display:none;">
+        <div class="placeholder-numeral">XVIII</div>
+        <div class="placeholder-symbol">🌙</div>
+        <div class="placeholder-name">The Moonchaser</div>
+        <div class="placeholder-sub">MXD — MDA</div>
+      </div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="scroll-cue">
+      <div class="scroll-cue-line"></div>
+      <span>The Deck</span>
+    </div>
+  </section>
+
+  <!-- =============== ARCANA SET =============== -->
+  <section class="arcana-section" id="arcana">
+    <div class="container">
+
+      <div class="section-header">
+        <span class="section-label">The Collection</span>
+        <h2 class="section-title">Three Cards. One Arcana.</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="cards-grid">
+
+        <!-- Moonchaser -->
+        <div class="card-item">
+          <div class="card-wrapper">
+            <img
+              src="assets/cards/moonchaser.jpg"
+              alt="The Moonchaser"
+              class="card-img"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="card-placeholder moonchaser" style="display:none;">
+              <div class="ph-numeral">XVIII</div>
+              <div class="ph-glyph">🌙</div>
+              <div class="ph-name">The Moonchaser</div>
+              <div class="ph-brand">MXD — MDA</div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-numeral">XVIII</div>
+            <h3 class="card-name">The Moonchaser</h3>
+            <p class="card-tagline">"Where's Crow? Not lost — just becoming."</p>
+            <div class="card-keywords">
+              <span class="keyword">Shadow</span>
+              <span class="keyword">Vision</span>
+              <span class="keyword">Purpose</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alchemist (Featured) -->
+        <div class="card-item featured">
+          <div class="card-wrapper">
+            <div class="card-glow-featured"></div>
+            <div class="featured-badge">Lead Card</div>
+            <img
+              src="assets/cards/alchemist.jpg"
+              alt="The Alchemist"
+              class="card-img"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="card-placeholder alchemist" style="display:none;">
+              <div class="ph-numeral">XIII</div>
+              <div class="ph-glyph">⚗️</div>
+              <div class="ph-name">The Alchemist</div>
+              <div class="ph-brand">MXD — MDA</div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-numeral">XIII</div>
+            <h3 class="card-name">The Alchemist</h3>
+            <p class="card-tagline">"I am both the pieces and the puzzle."</p>
+            <div class="card-keywords">
+              <span class="keyword">Memory</span>
+              <span class="keyword">Truth</span>
+              <span class="keyword">Alchemy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transformation -->
+        <div class="card-item">
+          <div class="card-wrapper">
+            <img
+              src="assets/cards/transformation.jpg"
+              alt="The Transformation"
+              class="card-img"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="card-placeholder transformation" style="display:none;">
+              <div class="ph-numeral">XIII</div>
+              <div class="ph-glyph">🪶</div>
+              <div class="ph-name">The Transformation</div>
+              <div class="ph-brand">MXD — MDA</div>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-numeral">XIII</div>
+            <h3 class="card-name">The Transformation</h3>
+            <p class="card-tagline">"Seek the hidden. Embrace change. Trust the call."</p>
+            <div class="card-keywords">
+              <span class="keyword">Change</span>
+              <span class="keyword">Hidden</span>
+              <span class="keyword">Call</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /cards-grid -->
+    </div>
+  </section>
+
+  <!-- =============== LORE =============== -->
+  <section class="lore-section" id="lore">
+    <div class="container">
+
+      <div class="section-header">
+        <span class="section-label">The Arcana</span>
+        <h2 class="section-title">Fragments of Self</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="lore-grid">
+
+        <!-- Card 1 lore -->
+        <div class="lore-item">
+          <div class="lore-image-col">
+            <img
+              src="assets/cards/moonchaser.jpg"
+              alt="The Moonchaser"
+              class="lore-mini-card"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="lore-mini-placeholder moonchaser" style="display:none;">
+              <div class="lore-mini-glyph">🌙</div>
+              <div class="lore-mini-name">The Moonchaser</div>
+            </div>
+          </div>
+          <div class="lore-text-col">
+            <div class="lore-number">01</div>
+            <p class="lore-label">Card XVIII</p>
+            <h3 class="lore-title">The Moonchaser</h3>
+            <p class="lore-body">
+              He stands at the edge of the city that never sleeps, crystal in hand,
+              watching a world reflected in glass and gaslight. The crow waits. The cards
+              are already dealt — The Fool, Death, Temperance — and every path leads
+              through the same dark wood. He is not lost. He is choosing the darkness
+              on purpose.
+            </p>
+            <div class="lore-phrases">
+              <span class="lore-phrase">Creative Alchemy — Stories become purpose</span>
+              <span class="lore-phrase">Shadow / Memory / Vision / Purpose</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 lore -->
+        <div class="lore-item">
+          <div class="lore-image-col">
+            <img
+              src="assets/cards/alchemist.jpg"
+              alt="The Alchemist"
+              class="lore-mini-card"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="lore-mini-placeholder alchemist" style="display:none;">
+              <div class="lore-mini-glyph">⚗️</div>
+              <div class="lore-mini-name">The Alchemist</div>
+            </div>
+          </div>
+          <div class="lore-text-col">
+            <div class="lore-number">02</div>
+            <p class="lore-label">Card XIII</p>
+            <h3 class="lore-title">The Alchemist</h3>
+            <p class="lore-body">
+              The all-seeing eye above. The crow perched on the shoulder like a confessor.
+              The open Book of Skretz catches every fragment of truth that falls from the
+              pen. He is both the pieces and the puzzle — the map and the territory, the
+              wound and the bandage. The hourglass empties. He writes anyway.
+            </p>
+            <div class="lore-phrases">
+              <span class="lore-phrase">Not lost — just becoming</span>
+              <span class="lore-phrase">The truth is built</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 lore -->
+        <div class="lore-item">
+          <div class="lore-image-col">
+            <img
+              src="assets/cards/transformation.jpg"
+              alt="The Transformation"
+              class="lore-mini-card"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="lore-mini-placeholder transformation" style="display:none;">
+              <div class="lore-mini-glyph">🪶</div>
+              <div class="lore-mini-name">The Transformation</div>
+            </div>
+          </div>
+          <div class="lore-text-col">
+            <div class="lore-number">03</div>
+            <p class="lore-label">Card XIII</p>
+            <h3 class="lore-title">The Transformation</h3>
+            <p class="lore-body">
+              The crow has become the walker. Denim and boots where feathers were.
+              Two ravens flank the path through ruin and gold. A mirror reflects
+              a star. A chest holds what hasn't been opened yet. The cane over
+              the shoulder is not a weapon — it's a divining rod, twitching
+              toward what the world hasn't admitted to itself.
+            </p>
+            <div class="lore-phrases">
+              <span class="lore-phrase">Seek the hidden. Embrace change</span>
+              <span class="lore-phrase">Create truth. Trust the call</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /lore-grid -->
+    </div>
+  </section>
+
+  <!-- =============== COLLECTOR TICKET =============== -->
+  <section class="ticket-section" id="collect">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">The Drop</span>
+        <h2 class="section-title">Admit One</h2>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="ticket-wrap">
+        <div class="ticket">
+
+          <div class="ticket-top">
+            <div>
+              <div class="ticket-brand">MXD — MDA</div>
+              <div class="ticket-brand-sub">First Arcana Release · Limited Collector Set</div>
+            </div>
+            <div class="ticket-admit">
+              Admit One
+              <strong>×3</strong>
+            </div>
+          </div>
+
+          <div class="ticket-body">
+            <div>
+              <h3 class="ticket-set-name">The Arcana Set</h3>
+              <p class="ticket-set-desc">
+                A 3-card collector drop for those who know the difference between
+                being lost and becoming something. Premium art print quality.
+                Each card carries its own lore.
+              </p>
+            </div>
+            <div class="ticket-divider-v"></div>
+            <ul class="ticket-cards-list">
+              <li>The Moonchaser <span>XVIII</span></li>
+              <li>The Alchemist <span>XIII</span></li>
+              <li>The Transformation <span>XIII</span></li>
+            </ul>
+          </div>
+
+          <div class="ticket-bottom">
+            <div class="ticket-axioms">
+              <span class="axiom">Shadow</span>
+              <span class="axiom">Memory</span>
+              <span class="axiom">Vision</span>
+              <span class="axiom">Purpose</span>
+            </div>
+            <div class="ticket-serial">MXD-MDA · ARC-001</div>
+          </div>
+
+        </div><!-- /ticket -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== LAUNCH CTA =============== -->
+  <section class="launch-section">
+    <div class="container">
+      <h2 class="launch-headline">The Set is Ready</h2>
+      <p class="launch-sub">Moonchaser / Alchemist / Transformation — First Arcana Drop</p>
+      <button class="btn-launch" onclick="activateLaunch()">Launch the Arcana Set</button>
+      <p class="launch-notify">Limited first run · No final_final files ever</p>
+      <div id="launch-status"></div>
+    </div>
+  </section>
+
+  <!-- =============== FOOTER =============== -->
+  <footer>
+    <div class="footer-logo">MXD — MDA</div>
+    <div class="footer-motto">Creative Alchemy · Stories become purpose</div>
+  </footer>
+
+</div><!-- /page -->
+
+<!-- =============== SCRIPTS =============== -->
+<script>
+/* Starfield */
+(function(){
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let W, H;
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function init(){
+    resize();
+    stars = Array.from({length: 220}, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.2,
+      o: Math.random(),
+      s: (Math.random() - 0.5) * 0.003,
+      vx: (Math.random() - 0.5) * 0.06,
+      vy: (Math.random() - 0.5) * 0.06,
+    }));
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    for(const s of stars){
+      s.o += s.s;
+      if(s.o > 1 || s.o < 0) s.s *= -1;
+      s.x += s.vx;
+      s.y += s.vy;
+      if(s.x < 0) s.x = W;
+      if(s.x > W) s.x = 0;
+      if(s.y < 0) s.y = H;
+      if(s.y > H) s.y = 0;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(242,233,216,${s.o * 0.7})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  init();
+  draw();
+})();
+
+/* Launch */
+function activateLaunch(){
+  const el = document.getElementById('launch-status');
+  el.style.display = 'block';
+  el.textContent = '⚡ The 3-card Arcana Set is live — Moonchaser · Alchemist · Transformation';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = 'fadeIn .5s ease';
+  document.querySelector('.btn-launch').textContent = 'The Arcana Set is Live';
+}
+</script>
+
+</body>
+</html>
