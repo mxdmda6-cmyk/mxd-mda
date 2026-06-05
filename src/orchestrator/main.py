@@ -3,18 +3,23 @@
 
 Usage:
     python src/orchestrator/main.py dashboard
+    python src/orchestrator/main.py dashboard --json
     python src/orchestrator/main.py doctor
     python src/orchestrator/main.py version
 """
 
 from __future__ import annotations
 
+import json
 import os
+from typing import Annotated
 
 import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+
+from src.orchestrator.dashboard import current_snapshot
 
 APP_NAME = "MXD-MDA Orchestrator"
 APP_VERSION = "0.1.0-foundation"
@@ -39,18 +44,37 @@ def _flag_value(name: str) -> str:
 
 
 @app.command()
-def dashboard() -> None:
+def dashboard(
+    json_output: Annotated[
+        bool,
+        typer.Option("--json", help="Print the dashboard snapshot as JSON."),
+    ] = False,
+) -> None:
     """Display the current production dashboard snapshot."""
+    snapshot = current_snapshot()
+
+    if json_output:
+        console.print(json.dumps(snapshot.to_dict(), indent=2))
+        return
+
+    active_stages = [stage for stage in snapshot.stages if stage.status in {"done", "active"}]
+    next_moves = "\n".join(f"• {move}" for move in snapshot.next_moves)
+    stage_lines = "\n".join(
+        f"✅ {stage.name}: {stage.summary}"
+        if stage.status == "done"
+        else f"⚗️ {stage.name}: {stage.summary}"
+        for stage in active_stages
+    )
+
     console.print(
         Panel.fit(
             "[bold cyan]🜂 MXD-MDA DASHBOARD[/bold cyan]\n\n"
-            "[yellow]Foundation / Production-Ops Stabilization[/yellow]\n\n"
-            "✅ Repository structure established\n"
-            "✅ Safe configuration template active\n"
-            "✅ Secret-free CI smoke checks active\n"
-            "✅ Bot deployment gated and manual-only\n\n"
-            "[dim]Next: production dashboard data model + orchestrator tests[/dim]",
-            title="Alchemical Production Dashboard",
+            f"[yellow]{snapshot.status_label}[/yellow]\n"
+            f"Canon Risk: {snapshot.canon_risk.upper()}\n"
+            f"Live Publishing Enabled: {snapshot.live_publishing_enabled}\n\n"
+            f"{stage_lines}\n\n"
+            f"[dim]Next moves:\n{next_moves}[/dim]",
+            title=snapshot.title,
             border_style="cyan",
         )
     )
