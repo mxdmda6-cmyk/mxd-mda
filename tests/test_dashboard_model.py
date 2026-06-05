@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 from src.orchestrator.dashboard import current_snapshot, generate_dashboard
 
 
@@ -18,8 +20,9 @@ def test_snapshot_contains_actionable_next_moves() -> None:
 
 def test_generate_dashboard_returns_json_friendly_contract() -> None:
     payload = generate_dashboard()
+    stages = cast("list[dict[str, Any]]", payload["stages"])
 
     assert payload["title"] == "MXD-MDA Production Dashboard"
     assert payload["live_publishing_enabled"] is False
-    assert isinstance(payload["stages"], tuple | list)
-    assert payload["stages"][0]["name"] == "Prima Materia"
+    assert isinstance(stages, list | tuple)
+    assert stages[0]["name"] == "Prima Materia"
