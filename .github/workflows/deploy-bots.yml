@@ -1,86 +1,53 @@
-name: "Deploy Bots"
+name: "Bot Deployment Gate"
 
-# Deploys Discord bots to Fly.io when merged to main
-# Usage: Week 5+ when bots are ready for deployment
+# Manual dry-run gate for future bot deployments.
+# Live deployment stays disabled until bot code, Fly.io config, secrets,
+# rollback logic, and QA approval are all present.
 
 on:
-  push:
-    branches: [ "main" ]
-    paths:
-      - 'src/bots/**'
-      - 'requirements.txt'
-      - '.github/workflows/deploy-bots.yml'
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Bot deployment target to inspect"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - lorekeeper
+          - social-alchemist
+          - high-priestess
 
 jobs:
-  deploy-lorekeeper:
-    name: Deploy Lorekeeper Bot
+  deployment-gate:
+    name: Validate Bot Deployment Readiness
     runs-on: ubuntu-latest
-    # Only run if bot code exists
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-lorekeeper]')
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Fly.io CLI
-        uses: superfly/flyctl-actions/setup-flyctl@master
-
-      # Week 5: Uncomment when ready to deploy
-      # - name: Deploy to Fly.io
-      #   run: flyctl deploy --config fly.lorekeeper.toml
-      #   env:
-      #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-      - name: Placeholder (Week 5)
+      - name: Report gate status
         run: |
-          echo "🤖 Lorekeeper deployment will be enabled in Week 5"
-          echo "📋 Prerequisites:"
-          echo "   1. Create Fly.io app: flyctl apps create mxd-lorekeeper"
-          echo "   2. Add fly.lorekeeper.toml configuration"
-          echo "   3. Set FLY_API_TOKEN secret in GitHub"
-          echo "   4. Uncomment deployment steps above"
+          echo "🤖 Bot deployment target: ${{ inputs.target }}"
+          echo "🚫 Live deployment is intentionally disabled."
+          echo "📋 Required before activation:"
+          echo "   1. Bot source code committed under src/bots/"
+          echo "   2. Deployment config committed and reviewed"
+          echo "   3. FLY_API_TOKEN stored as a GitHub Secret"
+          echo "   4. Rollback command documented"
+          echo "   5. QA approval recorded"
 
-  deploy-social-alchemist:
-    name: Deploy Social Alchemist Bot
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-social]')
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Week 6: Similar deployment steps
-      - name: Placeholder (Week 6)
+      - name: Check expected bot directories
         run: |
-          echo "🤖 Social Alchemist deployment will be enabled in Week 6"
+          for path in src/bots/lorekeeper src/bots/social_alchemist src/bots/high_priestess; do
+            if [ -d "$path" ]; then
+              echo "✅ Found $path"
+            else
+              echo "⚠️ Missing $path"
+            fi
+          done
 
-  deploy-high-priestess:
-    name: Deploy High Priestess Bot
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-oracle]')
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Week 7: Similar deployment steps
-      - name: Placeholder (Week 7)
+      - name: Exit safely
         run: |
-          echo "🤖 High Priestess deployment will be enabled in Week 7"
-
-  health-check:
-    name: Bot Health Check
-    runs-on: ubuntu-latest
-    needs: [deploy-lorekeeper, deploy-social-alchemist, deploy-high-priestess]
-    if: always()
-
-    steps:
-      - name: Check deployment status
-        run: |
-          echo "🔍 Checking bot health..."
-          echo "Week 5+: Will ping bot endpoints and verify status"
-
-      # Future: Actual health checks
-      # - name: Ping Lorekeeper
-      #   run: curl -f https://mxd-lorekeeper.fly.dev/health || exit 1
+          echo "Gate complete. No deployment attempted."
