@@ -1,0 +1,6 @@
+# Minimal dependencies for the active MXD-MDA orchestrator and test suite.
+# Use requirements.txt only when working on broader integrations.
+
+pytest>=8.0.0
+rich>=13.7.0
+typer>=0.9.0
