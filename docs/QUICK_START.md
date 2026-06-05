@@ -37,8 +37,8 @@ source .venv/bin/activate  # Mac/Linux
 ### Step 3: Install Core Dependencies
 
 ```bash
-# Minimal install for the current orchestrator
-pip install rich typer
+# Minimal install for the current orchestrator and tests
+pip install -r requirements-minimal.txt
 
 # Optional full install for integration development
 pip install -r requirements.txt
@@ -55,16 +55,13 @@ Only fill in keys for integrations you are actively testing. Keep all live-posti
 ### Step 5: Test the System
 
 ```bash
-python src/orchestrator/main.py test
+python src/orchestrator/main.py doctor
 python src/orchestrator/main.py dashboard
 python src/orchestrator/main.py version
+pytest -q
 ```
 
-You should see:
-
-```text
-✅ Orchestrator system initialized successfully!
-```
+You should see the doctor check complete safely and the pytest suite pass.
 
 ---
 
@@ -76,6 +73,7 @@ What you have now:
 - ✅ Python environment configured
 - ✅ Core dependencies installed
 - ✅ Orchestrator smoke-tested locally
+- ✅ Test suite ready
 - ✅ No live deployment or publishing trigger activated
 
 ---
@@ -87,6 +85,7 @@ What you have now:
 1. Read the README: `cat README.md` or open it in your editor.
 2. Explore structure: `tree -L 2` or `find . -maxdepth 2 -type f`.
 3. Review configuration: `cat config/.env.example`.
+4. Run full local QA when dev tools are installed: `npm run qa`.
 
 ### Current Operating Priorities
 
@@ -125,7 +124,13 @@ source .venv/bin/activate
 
 ```bash
 source .venv/bin/activate
-pip install rich typer
+pip install -r requirements-minimal.txt
+```
+
+### "pytest not found"
+
+```bash
+pip install -r requirements-minimal.txt
 ```
 
 ### "API key error"
@@ -154,14 +159,14 @@ Confirm the integration you are testing has a real key in `.env`. Do not paste r
 
 ```bash
 alias mxd-dashboard="python src/orchestrator/main.py dashboard"
-alias mxd-doctor="python src/orchestrator/main.py test"
+alias mxd-doctor="python src/orchestrator/main.py doctor"
 ```
 
 ### Keep dependencies tight
 
 ```bash
 pip list --outdated
-pip install --upgrade rich typer
+pip install --upgrade -r requirements-minimal.txt
 ```
 
 ---
