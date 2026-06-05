@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from typer.testing import CliRunner
 
@@ -50,3 +51,18 @@ def test_dashboard_json_export() -> None:
     assert payload["canon_risk"] == "green"
     assert payload["live_publishing_enabled"] is False
     assert payload["stages"][0]["name"] == "Prima Materia"
+
+
+def test_export_dashboard_writes_timestamped_json_file() -> None:
+    with runner.isolated_filesystem():
+        result = runner.invoke(app, ["export-dashboard", "--output-dir", "exports"])
+
+        assert result.exit_code == 0
+        assert "Dashboard export written" in result.output
+
+        exports = sorted(Path("exports").glob("MXD_MDA_DASHBOARD_*_v01.json"))
+        assert len(exports) == 1
+
+        payload = json.loads(exports[0].read_text(encoding="utf-8"))
+        assert payload["title"] == "MXD-MDA Production Dashboard"
+        assert payload["live_publishing_enabled"] is False
