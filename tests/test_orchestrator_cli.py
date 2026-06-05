@@ -1,3 +1,5 @@
+import json
+
 from typer.testing import CliRunner
 
 from src.orchestrator.main import app
@@ -35,4 +37,16 @@ def test_dashboard_command() -> None:
 
     assert result.exit_code == 0
     assert "MXD-MDA DASHBOARD" in result.output
-    assert "Production-Ops Stabilization" in result.output
+    assert "production-ops stabilization" in result.output
+    assert "Live Publishing Enabled: False" in result.output
+
+
+def test_dashboard_json_export() -> None:
+    result = runner.invoke(app, ["dashboard", "--json"])
+
+    assert result.exit_code == 0
+    payload = json.loads(result.output)
+    assert payload["title"] == "MXD-MDA Production Dashboard"
+    assert payload["canon_risk"] == "green"
+    assert payload["live_publishing_enabled"] is False
+    assert payload["stages"][0]["name"] == "Prima Materia"
