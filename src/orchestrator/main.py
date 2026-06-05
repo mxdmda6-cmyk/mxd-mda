@@ -19,7 +19,10 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from src.orchestrator.dashboard import current_snapshot
+try:
+    from src.orchestrator.dashboard import current_snapshot
+except ModuleNotFoundError:  # pragma: no cover - supports direct script execution
+    from dashboard import current_snapshot
 
 APP_NAME = "MXD-MDA Orchestrator"
 APP_VERSION = "0.1.0-foundation"
@@ -57,7 +60,9 @@ def dashboard(
         console.print(json.dumps(snapshot.to_dict(), indent=2))
         return
 
-    active_stages = [stage for stage in snapshot.stages if stage.status in {"done", "active"}]
+    active_stages = [
+        stage for stage in snapshot.stages if stage.status in {"done", "active"}
+    ]
     next_moves = "\n".join(f"• {move}" for move in snapshot.next_moves)
     stage_lines = "\n".join(
         f"✅ {stage.name}: {stage.summary}"
