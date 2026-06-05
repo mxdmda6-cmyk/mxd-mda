@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Literal
+from typing import Any, Literal, cast
 
 StageStatus = Literal["done", "active", "planned", "blocked"]
 RiskLevel = Literal["green", "yellow", "red"]
@@ -40,9 +40,9 @@ class DashboardSnapshot:
     risks: tuple[ProductionRisk, ...]
     next_moves: tuple[str, ...]
 
-    def to_dict(self) -> dict[str, object]:
+    def to_dict(self) -> dict[str, Any]:
         """Return a JSON-friendly dictionary representation."""
-        return asdict(self)
+        return cast("dict[str, Any]", asdict(self))
 
 
 def current_snapshot() -> DashboardSnapshot:
@@ -114,6 +114,6 @@ def current_snapshot() -> DashboardSnapshot:
 
 
 # Backward-compatible public function for older callers.
-def generate_dashboard() -> dict[str, object]:
+def generate_dashboard() -> dict[str, Any]:
     """Generate the production dashboard view."""
     return current_snapshot().to_dict()
