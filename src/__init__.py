@@ -1,1 +1,1 @@
-# Start here
+"""MXD-MDA source package."""
