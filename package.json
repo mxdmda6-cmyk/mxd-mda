@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "dashboard": "python src/orchestrator/main.py dashboard",
+    "dashboard:json": "python src/orchestrator/main.py dashboard --json",
+    "dashboard:export": "python src/orchestrator/main.py export-dashboard",
     "doctor": "python src/orchestrator/main.py doctor",
     "version": "python src/orchestrator/main.py version",
     "test": "pytest -q",
