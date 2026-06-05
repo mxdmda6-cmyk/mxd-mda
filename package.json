@@ -1,18 +1,22 @@
 {
   "name": "mxd-mda",
-  "version": "1.0.0",
-  "description": "Interactive Day of the Dead Birthday Card with Chess Utilities",
-  "type": "module",
+  "version": "0.1.0",
+  "description": "MXD-MDA transmedia orchestration system",
+  "private": true,
   "scripts": {
-    "build": "tsc",
-    "test": "node --test tests/**/*.test.js",
-    "test:watch": "node --test --watch tests/**/*.test.js"
+    "dashboard": "python src/orchestrator/main.py dashboard",
+    "doctor": "python src/orchestrator/main.py test",
+    "version": "python src/orchestrator/main.py version",
+    "test": "python src/orchestrator/main.py test",
+    "build": "python src/orchestrator/main.py version"
   },
-  "keywords": ["chess", "utilities", "typescript"],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "typescript": "^5.3.3",
-    "@types/node": "^24.10.0"
-  }
+  "keywords": [
+    "mxd-mda",
+    "transmedia",
+    "orchestration",
+    "ai-agents",
+    "storytelling"
+  ],
+  "author": "MXD-MDA",
+  "license": "MIT"
 }
