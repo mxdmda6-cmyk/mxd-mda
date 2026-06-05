@@ -5,6 +5,7 @@ Usage:
     python src/orchestrator/main.py dashboard
     python src/orchestrator/main.py dashboard --json
     python src/orchestrator/main.py export-dashboard
+    python src/orchestrator/main.py validate-sprint-state PATH
     python src/orchestrator/main.py doctor
     python src/orchestrator/main.py version
 """
@@ -24,8 +25,10 @@ from rich.table import Table
 
 try:
     from src.orchestrator.dashboard import current_snapshot
+    from src.orchestrator.sprint_state import load_sprint_state, validate_sprint_state
 except ModuleNotFoundError:  # pragma: no cover - supports direct script execution
     from dashboard import current_snapshot
+    from sprint_state import load_sprint_state, validate_sprint_state
 
 APP_NAME = "MXD-MDA Orchestrator"
 APP_VERSION = "0.1.0-foundation"
@@ -110,6 +113,32 @@ def export_dashboard(
     output_path = output_dir / f"MXD_MDA_DASHBOARD_{timestamp}_v01.json"
     output_path.write_text(_dashboard_payload(), encoding="utf-8")
     console.print(f"[green]✅ Dashboard export written:[/green] {output_path}")
+
+
+@app.command("validate-sprint-state")
+def validate_sprint_state_command(path: Path) -> None:
+    """Validate a sprint-state JSON file before sync or publication."""
+    try:
+        payload = load_sprint_state(path)
+    except FileNotFoundError as exc:
+        raise typer.BadParameter(f"File not found: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise typer.BadParameter(f"Invalid JSON: {exc.msg}") from exc
+
+    result = validate_sprint_state(payload)
+
+    if result.warnings:
+        console.print("[yellow]Warnings:[/yellow]")
+        for warning in result.warnings:
+            console.print(f"  ⚠️ {warning}")
+
+    if not result.valid:
+        console.print("[red]Sprint state validation failed:[/red]")
+        for error in result.errors:
+            console.print(f"  ❌ {error}")
+        raise typer.Exit(code=1)
+
+    console.print("[green]✅ Sprint state is valid and safe to review.[/green]")
 
 
 @app.command("doctor")
