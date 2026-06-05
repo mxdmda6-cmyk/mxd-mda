@@ -46,19 +46,35 @@ python3 -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # 3. Install minimal active dependencies
-pip install rich typer
+pip install -r requirements-minimal.txt
 
 # 4. Configure your local environment
 cp config/.env.example .env
 # Only add keys for integrations you are actively testing.
 
 # 5. Test the orchestrator
-python src/orchestrator/main.py test
+python src/orchestrator/main.py doctor
 python src/orchestrator/main.py dashboard
 python src/orchestrator/main.py version
+pytest -q
 ```
 
 **Need help?** See [QUICK_START.md](docs/QUICK_START.md) for detailed setup.
+
+---
+
+## 🧪 DAILY COMMANDS
+
+```bash
+npm run dashboard        # Human-readable production dashboard
+npm run dashboard:json   # Dashboard snapshot as JSON
+npm run dashboard:export # Timestamped dashboard export into exports/
+npm run sprint:validate  # Validate the example sprint-state file
+npm test                 # Run pytest
+npm run qa               # Compile, test, lint, format-check, and type-check
+```
+
+Generated dashboard exports are ignored by Git. The export command is local-only and must not publish, deploy, email, post, or write to Notion.
 
 ---
 
@@ -70,12 +86,15 @@ python src/orchestrator/main.py version
 mxd-mda/
 ├── src/
 │   ├── orchestrator/     # Core command center
-│   │   └── main.py       # CLI entry point
+│   │   ├── main.py       # CLI entry point
+│   │   ├── dashboard.py  # Dashboard data model
+│   │   └── sprint_state.py # Sprint-state validator
 │   └── bots/             # Future bot implementations
 ├── config/               # Configuration templates
 │   └── .env.example      # Safe placeholder environment template
-├── docs/                 # Strategy, ops, and build documentation
-├── tests/                # Future test suites
+├── docs/                 # Strategy, ops, schemas, and build documentation
+├── exports/              # Local generated exports; JSON ignored by Git
+├── tests/                # CLI, dashboard, env, and sprint-state tests
 ├── scripts/              # Future deployment and automation scripts
 └── .github/workflows/    # CI and manual deployment workflows
 ```
@@ -103,9 +122,11 @@ This system supports six creative-production functions:
 - Narrative consistency checks across Crow Codex canon
 - Platform-specific drafting without enabling live publishing by default
 
-### 📊 Alchemical Dashboard Logic
+### 📊 Data-Driven Production Dashboard
 
-Project tracking mapped to transformation stages:
+The CLI dashboard is backed by a typed snapshot model and can be exported as JSON for review, reporting, or future sync work.
+
+Project tracking is mapped to transformation stages:
 
 - **Prima Materia** → Raw ideas and concepts
 - **Dissolution** → Breaking down complexity
@@ -114,6 +135,10 @@ Project tracking mapped to transformation stages:
 - **Fermentation** → Audience growth
 - **Distillation** → Refinement
 - **Coagulation** → Manifestation
+
+### 🧾 Sprint-State Contract
+
+`docs/schemas/sprint_state.schema.json` defines the sprint shape for future Notion/GitHub alignment. The local validator rejects unsafe sprint states, including any payload where `live_publishing_enabled` is not `false`.
 
 ### 🤖 Agent Network - Gated by Design
 
@@ -133,13 +158,13 @@ Current and planned integrations:
 | Platform | Purpose | Status |
 |----------|---------|--------|
 | **GitHub** | Source control, issues, CI, documentation | ✅ Active |
-| **Python CLI** | Local orchestrator and smoke checks | ✅ Active |
-| **Notion** | Production tracking and databases | 🔜 Gated |
+| **Python CLI** | Local orchestrator, dashboard, exports, validation | ✅ Active |
+| **Notion** | Production tracking and databases | 🔜 Spec only / gated |
 | **Amazon KDP** | Publishing workflow support | 🔜 Gated |
 | **Gumroad** | Digital asset sales | 🔜 Gated |
 | **Instagram/TikTok** | Visual storytelling and campaign planning | 🔜 Gated |
 | **Buffer/Later** | Social scheduling support | 🔜 Gated |
-| **Fly.io** | Bot hosting and deployment | 🔜 Manual only |
+| **Fly.io** | Bot hosting and deployment | 🔜 Manual gate only |
 | **Qdrant/Supabase** | Search and structured production data | 🔜 Gated |
 
 ---
@@ -149,8 +174,10 @@ Current and planned integrations:
 ### Core Guides
 
 - **[QUICK_START.md](docs/QUICK_START.md)** - Local setup and smoke test
+- **[schemas/README.md](docs/schemas/README.md)** - Schema contracts
+- **[NOTION_TO_SPRINT_STATE_MAPPING_2026-06-05_v01.md](docs/operations/NOTION_TO_SPRINT_STATE_MAPPING_2026-06-05_v01.md)** - Notion mapping spec
+- **[BUG_FIX_LOG_2026-06-05_v01.md](docs/operations/BUG_FIX_LOG_2026-06-05_v01.md)** - Stabilization log
 - **[STRATEGIC_SYNTHESIS.md](docs/STRATEGIC_SYNTHESIS.md)** - 90-day action plan
-- **[CLAUDE_CODE_GUIDE.md](docs/CLAUDE_CODE_GUIDE.md)** - Advanced AI automation
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
 - **[SECURITY.md](SECURITY.md)** - Security policies and contact
 
@@ -169,13 +196,15 @@ Current and planned integrations:
 - [x] Repository structure and documentation
 - [x] Safe local environment template
 - [x] Secret-free CI smoke checks
-- [ ] Core orchestrator implementation
-- [ ] Production dashboard data model
-- [ ] Tests for active orchestrator commands
+- [x] Core orchestrator CLI commands
+- [x] Production dashboard data model
+- [x] Tests for active orchestrator commands
+- [x] Sprint-state schema and validator
 
 ### Phase 2: Controlled Activation
 
-- [ ] Notion database mapping
+- [x] Notion database mapping spec
+- [ ] Local Notion export converter
 - [ ] Content generation engine
 - [ ] Canon risk field and QA gate
 - [ ] Manual export workflows
