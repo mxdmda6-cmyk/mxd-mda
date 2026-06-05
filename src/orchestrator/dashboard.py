@@ -1,41 +1,119 @@
-"""
-🜂 Production Dashboard Module
+"""Production dashboard data model for MXD-MDA."""
 
-Displays project status mapped to alchemical transformation stages.
+from __future__ import annotations
 
-Stages:
-- Prima Materia: Raw ideas & concepts
-- Dissolution: Breaking down complexity
-- Separation: Focus on essentials
-- Conjunction: Uniting platforms
-- Fermentation: Community growth
-- Distillation: Refinement
-- Coagulation: Manifestation
+from dataclasses import asdict, dataclass
+from typing import Literal
 
-Implementation: Week 2
-"""
-
-from enum import Enum
-from typing import Dict, List
+StageStatus = Literal["done", "active", "planned", "blocked"]
+RiskLevel = Literal["green", "yellow", "red"]
 
 
-class AlchemicalStage(str, Enum):
-    """The seven stages of alchemical transformation."""
+@dataclass(frozen=True)
+class DashboardStage:
+    """A single alchemical production stage."""
 
-    PRIMA_MATERIA = "prima_materia"
-    DISSOLUTION = "dissolution"
-    SEPARATION = "separation"
-    CONJUNCTION = "conjunction"
-    FERMENTATION = "fermentation"
-    DISTILLATION = "distillation"
-    COAGULATION = "coagulation"
+    name: str
+    meaning: str
+    status: StageStatus
+    summary: str
 
 
-# Placeholder for Week 2 implementation
-def generate_dashboard() -> Dict:
+@dataclass(frozen=True)
+class ProductionRisk:
+    """A production risk shown on the dashboard."""
+
+    name: str
+    level: RiskLevel
+    mitigation: str
+
+
+@dataclass(frozen=True)
+class DashboardSnapshot:
+    """Current production dashboard snapshot."""
+
+    title: str
+    status_label: str
+    canon_risk: RiskLevel
+    live_publishing_enabled: bool
+    stages: tuple[DashboardStage, ...]
+    risks: tuple[ProductionRisk, ...]
+    next_moves: tuple[str, ...]
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-friendly dictionary representation."""
+        return asdict(self)
+
+
+def current_snapshot() -> DashboardSnapshot:
+    """Return the current production dashboard snapshot.
+
+    This is intentionally static for now. The contract gives future Notion,
+    GitHub, and local dashboard integrations one stable shape to target.
+    """
+    return DashboardSnapshot(
+        title="MXD-MDA Production Dashboard",
+        status_label="Foundation / production-ops stabilization",
+        canon_risk="green",
+        live_publishing_enabled=False,
+        stages=(
+            DashboardStage(
+                name="Prima Materia",
+                meaning="Raw material gathered and named",
+                status="done",
+                summary="Repository structure, docs, and safe config spine established.",
+            ),
+            DashboardStage(
+                name="Dissolution",
+                meaning="Break false structure and drift",
+                status="done",
+                summary="Stale metadata, setup docs, and unsafe placeholders corrected.",
+            ),
+            DashboardStage(
+                name="Separation",
+                meaning="Protect what matters from noise",
+                status="active",
+                summary="Tests, gates, and feature flags separate live work from planned work.",
+            ),
+            DashboardStage(
+                name="Conjunction",
+                meaning="Reconnect systems cleanly",
+                status="planned",
+                summary="Notion/GitHub production sync remains gated until schema is confirmed.",
+            ),
+            DashboardStage(
+                name="Coagulation",
+                meaning="Ship stable artifacts",
+                status="planned",
+                summary="Next target: dashboard export and sprint-state contract.",
+            ),
+        ),
+        risks=(
+            ProductionRisk(
+                name="Automation overreach",
+                level="yellow",
+                mitigation="Keep publishing, social, email, and bot deployment disabled by default.",
+            ),
+            ProductionRisk(
+                name="Documentation drift",
+                level="yellow",
+                mitigation="Back executable behavior with tests and update logs.",
+            ),
+            ProductionRisk(
+                name="Canon drift",
+                level="green",
+                mitigation="Route story changes through canon review before implementation.",
+            ),
+        ),
+        next_moves=(
+            "Add dashboard JSON export command.",
+            "Create sprint-state schema for Notion/GitHub alignment.",
+            "Patch CI failures immediately when workflow results appear.",
+        ),
+    )
+
+
+# Backward-compatible public function for older callers.
+def generate_dashboard() -> dict[str, object]:
     """Generate the production dashboard view."""
-    return {
-        "status": "foundation_phase",
-        "stage": AlchemicalStage.PRIMA_MATERIA,
-        "message": "Week 2 implementation planned",
-    }
+    return current_snapshot().to_dict()
