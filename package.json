@@ -7,6 +7,7 @@
     "dashboard": "python src/orchestrator/main.py dashboard",
     "dashboard:json": "python src/orchestrator/main.py dashboard --json",
     "dashboard:export": "python src/orchestrator/main.py export-dashboard",
+    "sprint:validate": "python src/orchestrator/main.py validate-sprint-state docs/operations/SPRINT_STATE_EXAMPLE_2026-06-05_v01.json",
     "doctor": "python src/orchestrator/main.py doctor",
     "version": "python src/orchestrator/main.py version",
     "test": "pytest -q",
