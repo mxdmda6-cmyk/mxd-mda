@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mxdmda6-cmyk/mxd-mda/docs/schemas/sprint_state.schema.json",
+  "title": "MXD-MDA Sprint State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "updated_at",
+    "status_label",
+    "canon_risk",
+    "live_publishing_enabled",
+    "tracks",
+    "blockers",
+    "next_moves"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canon_risk": {
+      "type": "string",
+      "enum": ["green", "yellow", "red"]
+    },
+    "live_publishing_enabled": {
+      "type": "boolean",
+      "const": false
+    },
+    "tracks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/track"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    },
+    "next_moves": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "track": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "owner", "status", "canon_risk", "tasks"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_/-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": ["planned", "active", "blocked", "done"]
+        },
+        "canon_risk": {
+          "type": "string",
+          "enum": ["green", "yellow", "red"]
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/task"
+          }
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "status", "artifact_path"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_/-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": ["planned", "active", "blocked", "done"]
+        },
+        "artifact_path": {
+          "type": "string"
+        }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "severity", "owner", "resolution_path"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_/-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolution_path": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
