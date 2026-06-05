@@ -1,6 +1,6 @@
 # 🜂 MXD-MDA QUICK START GUIDE
 
-Get the orchestration system running in **5 minutes**.
+Get the orchestration system running locally without touching live publishing, bots, or automation.
 
 ---
 
@@ -8,66 +8,51 @@ Get the orchestration system running in **5 minutes**.
 
 - **Python 3.10+** installed
 - **Git** installed
-- **Text editor** (VS Code, Cursor, etc.)
-- **Anthropic API key** ([get one here](https://console.anthropic.com/))
+- **Text editor** such as VS Code, Cursor, or similar
+- Optional: **Anthropic API key** for future AI-generation features
 
 ---
 
 ## 🚀 5-Minute Setup
 
-### Step 1: Clone & Navigate (30 seconds)
+### Step 1: Clone & Navigate
 
 ```bash
-git clone https://github.com/[your-org]/mxd-mda.git
+git clone https://github.com/mxdmda6-cmyk/mxd-mda.git
 cd mxd-mda
 ```
 
-### Step 2: Create Virtual Environment (1 minute)
+### Step 2: Create Virtual Environment
 
 ```bash
 # Create venv
 python3 -m venv .venv
 
 # Activate it
-source .venv/bin/activate  # On Mac/Linux
+source .venv/bin/activate  # Mac/Linux
 # OR
-.venv\Scripts\activate     # On Windows
+.venv\Scripts\activate     # Windows
 ```
 
-### Step 3: Install Core Dependencies (2 minutes)
+### Step 3: Install Core Dependencies
 
 ```bash
-# Minimal install for Week 1
-pip install anthropic python-dotenv pydantic rich typer
+# Minimal install for the current orchestrator
+pip install rich typer
 
-# OR full install (takes longer)
+# Optional full install for integration development
 pip install -r requirements.txt
 ```
 
-### Step 4: Configure Environment (1 minute)
+### Step 4: Configure Environment
 
 ```bash
-# Copy template
 cp config/.env.example .env
-
-# Edit .env and add your API key
-# ANTHROPIC_API_KEY=sk-ant-api03-YOUR_KEY_HERE
 ```
 
-**Using nano/vim:**
-```bash
-nano .env  # or vim .env
-# Add: ANTHROPIC_API_KEY=sk-ant-YOUR_KEY
-# Save & exit
-```
+Only fill in keys for integrations you are actively testing. Keep all live-posting, Discord, email automation, and vector-search feature flags disabled unless a separate implementation task explicitly turns them on.
 
-**Using VS Code:**
-```bash
-code .env
-# Add key, save file
-```
-
-### Step 5: Test the System (30 seconds)
+### Step 5: Test the System
 
 ```bash
 python src/orchestrator/main.py test
@@ -76,94 +61,86 @@ python src/orchestrator/main.py version
 ```
 
 You should see:
-```
+
+```text
 ✅ Orchestrator system initialized successfully!
 ```
 
 ---
 
-## ✅ You're Ready!
+## ✅ You're Ready
 
-**What you have now:**
+What you have now:
+
 - ✅ Repository structure in place
 - ✅ Python environment configured
 - ✅ Core dependencies installed
-- ✅ API key configured
-- ✅ Orchestrator tested & working
+- ✅ Orchestrator smoke-tested locally
+- ✅ No live deployment or publishing trigger activated
 
 ---
 
 ## 🎯 Next Steps
 
-### Immediate (Next 30 minutes)
-1. **Read the README**: `cat README.md` or open in browser
-2. **Explore structure**: `tree -L 2` or `ls -R`
-3. **Review configuration**: `cat config/.env.example`
+### Immediate
 
-### This Week (Week 1 Goals)
-- [ ] Read [STRATEGIC_SYNTHESIS.md](STRATEGIC_SYNTHESIS.md)
-- [ ] Plan your Notion database structure
-- [ ] Set up Discord server (if ready)
-- [ ] Test content generation (Week 2)
+1. Read the README: `cat README.md` or open it in your editor.
+2. Explore structure: `tree -L 2` or `find . -maxdepth 2 -type f`.
+3. Review configuration: `cat config/.env.example`.
 
-### Week 2 Goals
-- [ ] Implement core orchestrator features
-- [ ] Create Notion databases
-- [ ] Test dashboard functionality
-- [ ] Generate first AI content
+### Current Operating Priorities
+
+- [ ] Keep the production dashboard and sprint docs current.
+- [ ] Implement orchestrator features behind disabled-by-default flags.
+- [ ] Add tests before enabling automation paths.
+- [ ] Keep bot deployment manual until infrastructure is confirmed.
 
 ---
 
 ## 🔧 Troubleshooting
 
 ### "Python not found"
-```bash
-# Try python3 instead
-python3 --version
 
-# Install Python 3.10+ from python.org
+```bash
+python3 --version
 ```
 
+Install Python 3.10+ if needed.
+
 ### "pip not found"
+
 ```bash
-# Use python -m pip instead
 python -m pip install --upgrade pip
 ```
 
 ### "Permission denied"
+
 ```bash
-# Don't use sudo! Use venv instead
+# Do not use sudo for project dependencies. Use venv instead.
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 ### "Module not found"
-```bash
-# Ensure venv is activated (you should see (.venv) in prompt)
-source .venv/bin/activate
 
-# Reinstall dependencies
-pip install -r requirements.txt
+```bash
+source .venv/bin/activate
+pip install rich typer
 ```
 
 ### "API key error"
+
 ```bash
-# Verify .env file exists
 ls -la .env
-
-# Check key format (should start with sk-ant-api03-)
-cat .env | grep ANTHROPIC
-
-# Ensure no spaces around the = sign
-# CORRECT: ANTHROPIC_API_KEY=sk-ant-...
-# WRONG:   ANTHROPIC_API_KEY = sk-ant-...
 ```
+
+Confirm the integration you are testing has a real key in `.env`. Do not paste real keys into docs, screenshots, GitHub issues, or chat.
 
 ---
 
 ## 📚 Documentation Reference
 
-- **[README.md](../README.md)** - System overview & architecture
+- **[README.md](../README.md)** - System overview and architecture
 - **[STRATEGIC_SYNTHESIS.md](STRATEGIC_SYNTHESIS.md)** - 90-day action plan
 - **[CLAUDE_CODE_GUIDE.md](CLAUDE_CODE_GUIDE.md)** - Advanced automation
 - **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Contribution guidelines
@@ -173,52 +150,30 @@ cat .env | grep ANTHROPIC
 
 ## 🎨 Pro Tips
 
-### Activate venv automatically (optional)
-Add to your `.bashrc` or `.zshrc`:
-```bash
-# Auto-activate venv when cd into project
-cd() {
-  builtin cd "$@"
-  if [[ -f .venv/bin/activate ]]; then
-    source .venv/bin/activate
-  fi
-}
-```
-
 ### Use aliases for common commands
+
 ```bash
-# Add to .bashrc/.zshrc
 alias mxd-dashboard="python src/orchestrator/main.py dashboard"
-alias mxd-test="python src/orchestrator/main.py test"
+alias mxd-doctor="python src/orchestrator/main.py test"
 ```
 
-### Keep dependencies updated
+### Keep dependencies tight
+
 ```bash
-# Check for updates
 pip list --outdated
-
-# Update specific package
-pip install --upgrade anthropic
-
-# Update all
-pip install --upgrade -r requirements.txt
+pip install --upgrade rich typer
 ```
 
 ---
 
 ## 🜂 The Journey Begins
 
-```
-Prima Materia Phase Complete ✅
+```text
+Foundation smoke test complete ✅
 
-You've established the foundation.
-The transformation has begun.
+The machine turns only when you choose to turn the key.
 
 "Find Crow. Find Yourself."
 ```
 
 **Next**: Read [STRATEGIC_SYNTHESIS.md](STRATEGIC_SYNTHESIS.md) to understand the full 90-day plan.
-
----
-
-**Questions?** Open a GitHub issue or check the [Community](../README.md#community) section.
