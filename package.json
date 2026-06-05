@@ -5,9 +5,10 @@
   "private": true,
   "scripts": {
     "dashboard": "python src/orchestrator/main.py dashboard",
-    "doctor": "python src/orchestrator/main.py test",
+    "doctor": "python src/orchestrator/main.py doctor",
     "version": "python src/orchestrator/main.py version",
-    "test": "python src/orchestrator/main.py test",
+    "test": "pytest -q",
+    "qa": "python -m compileall src tests && pytest -q && ruff check src tests && black --check src tests && mypy src tests --ignore-missing-imports",
     "build": "python src/orchestrator/main.py version"
   },
   "keywords": [
