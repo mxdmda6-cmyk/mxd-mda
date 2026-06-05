@@ -1,6 +1,6 @@
 name: "Test & Quality"
 
-# Runs tests and quality checks on PRs and pushes
+# Runs deterministic, secret-free smoke checks on PRs and pushes.
 on:
   push:
     branches: [ "main", "claude/*" ]
@@ -29,24 +29,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov pytest-asyncio
-          # Install only core dependencies for testing
-          pip install anthropic python-dotenv pydantic rich typer
+          pip install rich typer
 
-      - name: Run tests
+      - name: Run orchestrator smoke checks
         run: |
-          # Week 2: pytest tests/ --cov=src --cov-report=xml
-          # For now, just verify imports work
+          python -m compileall src
           python -c "import src.orchestrator; print('✅ Orchestrator imports successfully')"
           python src/orchestrator/main.py version
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-
-      # Future: Upload coverage to Codecov
-      # - name: Upload coverage
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     file: ./coverage.xml
+          python src/orchestrator/main.py test
 
   lint:
     name: Code Quality
@@ -64,18 +54,13 @@ jobs:
       - name: Install linting tools
         run: |
           python -m pip install --upgrade pip
-          pip install ruff black mypy
+          pip install ruff black mypy rich typer
 
       - name: Check formatting with Black
-        run: |
-          black --check src/ || echo "⚠️  Black formatting needed (Week 2+)"
+        run: black --check src/
 
       - name: Lint with Ruff
-        run: |
-          ruff check src/ || echo "⚠️  Ruff linting needed (Week 2+)"
-        continue-on-error: true
+        run: ruff check src/
 
       - name: Type check with MyPy
-        run: |
-          mypy src/ || echo "⚠️  Type hints needed (Week 2+)"
-        continue-on-error: true
+        run: mypy src/ --ignore-missing-imports
