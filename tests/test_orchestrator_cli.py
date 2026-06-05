@@ -9,6 +9,35 @@ from src.orchestrator.main import app
 runner = CliRunner()
 
 
+def _valid_sprint_state() -> dict[str, object]:
+    return {
+        "schema_version": "1.0.0",
+        "updated_at": "2026-06-05T12:00:00-05:00",
+        "status_label": "Foundation / production-ops stabilization",
+        "canon_risk": "green",
+        "live_publishing_enabled": False,
+        "tracks": [
+            {
+                "id": "OPS/STABILIZATION",
+                "name": "Production Spine Stabilization",
+                "owner": "Prime Alchemist",
+                "status": "active",
+                "canon_risk": "green",
+                "tasks": [
+                    {
+                        "id": "OPS-001",
+                        "title": "Validate sprint state",
+                        "status": "done",
+                        "artifact_path": "docs/schemas/sprint_state.schema.json",
+                    }
+                ],
+            }
+        ],
+        "blockers": [],
+        "next_moves": ["Inspect CI result when visible."],
+    }
+
+
 def test_version_command() -> None:
     result = runner.invoke(app, ["version"])
 
@@ -66,3 +95,27 @@ def test_export_dashboard_writes_timestamped_json_file() -> None:
         payload = json.loads(exports[0].read_text(encoding="utf-8"))
         assert payload["title"] == "MXD-MDA Production Dashboard"
         assert payload["live_publishing_enabled"] is False
+
+
+def test_validate_sprint_state_command_accepts_safe_file() -> None:
+    with runner.isolated_filesystem():
+        path = Path("sprint_state.json")
+        path.write_text(json.dumps(_valid_sprint_state()), encoding="utf-8")
+
+        result = runner.invoke(app, ["validate-sprint-state", str(path)])
+
+        assert result.exit_code == 0
+        assert "Sprint state is valid" in result.output
+
+
+def test_validate_sprint_state_command_rejects_live_publishing() -> None:
+    with runner.isolated_filesystem():
+        payload = _valid_sprint_state()
+        payload["live_publishing_enabled"] = True
+        path = Path("sprint_state.json")
+        path.write_text(json.dumps(payload), encoding="utf-8")
+
+        result = runner.invoke(app, ["validate-sprint-state", str(path)])
+
+        assert result.exit_code == 1
+        assert "live_publishing_enabled must remain false" in result.output
