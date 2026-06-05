@@ -4,6 +4,7 @@
 Usage:
     python src/orchestrator/main.py dashboard
     python src/orchestrator/main.py dashboard --json
+    python src/orchestrator/main.py export-dashboard
     python src/orchestrator/main.py doctor
     python src/orchestrator/main.py version
 """
@@ -12,6 +13,8 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -46,6 +49,11 @@ def _flag_value(name: str) -> str:
     return os.getenv(name, "false").strip().lower()
 
 
+def _dashboard_payload() -> str:
+    """Return the current dashboard snapshot as formatted JSON."""
+    return json.dumps(current_snapshot().to_dict(), indent=2) + "\n"
+
+
 @app.command()
 def dashboard(
     json_output: Annotated[
@@ -57,7 +65,7 @@ def dashboard(
     snapshot = current_snapshot()
 
     if json_output:
-        console.print(json.dumps(snapshot.to_dict(), indent=2))
+        console.print(_dashboard_payload(), end="")
         return
 
     active_stages = [
@@ -83,6 +91,25 @@ def dashboard(
             border_style="cyan",
         )
     )
+
+
+@app.command("export-dashboard")
+def export_dashboard(
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            "-o",
+            help="Directory for generated dashboard JSON exports.",
+        ),
+    ] = Path("exports")
+) -> None:
+    """Write the dashboard snapshot to a timestamped JSON file."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    output_path = output_dir / f"MXD_MDA_DASHBOARD_{timestamp}_v01.json"
+    output_path.write_text(_dashboard_payload(), encoding="utf-8")
+    console.print(f"[green]✅ Dashboard export written:[/green] {output_path}")
 
 
 @app.command("doctor")
