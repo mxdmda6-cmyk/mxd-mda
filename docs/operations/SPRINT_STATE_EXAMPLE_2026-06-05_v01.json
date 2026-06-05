@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-06-05T12:00:00-05:00",
+  "status_label": "Foundation / production-ops stabilization",
+  "canon_risk": "green",
+  "live_publishing_enabled": false,
+  "tracks": [
+    {
+      "id": "OPS/STABILIZATION",
+      "name": "Production Spine Stabilization",
+      "owner": "Prime Alchemist",
+      "status": "active",
+      "canon_risk": "green",
+      "tasks": [
+        {
+          "id": "OPS-001",
+          "title": "Correct root metadata and helper scripts",
+          "status": "done",
+          "artifact_path": "package.json"
+        },
+        {
+          "id": "OPS-002",
+          "title": "Add safe orchestrator doctor command",
+          "status": "done",
+          "artifact_path": "src/orchestrator/main.py"
+        },
+        {
+          "id": "OPS-003",
+          "title": "Add dashboard data contract",
+          "status": "done",
+          "artifact_path": "src/orchestrator/dashboard.py"
+        }
+      ]
+    },
+    {
+      "id": "AUTO/GATES",
+      "name": "Automation Gates",
+      "owner": "Production Systems",
+      "status": "active",
+      "canon_risk": "green",
+      "tasks": [
+        {
+          "id": "AUTO-001",
+          "title": "Disable live bot deployment by default",
+          "status": "done",
+          "artifact_path": ".github/workflows/deploy-bots.yml"
+        },
+        {
+          "id": "AUTO-002",
+          "title": "Keep live publishing and social posting off by default",
+          "status": "done",
+          "artifact_path": "config/.env.example"
+        }
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "id": "BLOCKER-001",
+      "title": "Latest GitHub Actions run not yet visible for inspection",
+      "severity": "medium",
+      "owner": "Production Systems",
+      "resolution_path": "Inspect workflow result once GitHub reports the run, then patch failures immediately."
+    }
+  ],
+  "next_moves": [
+    "Inspect CI result when visible.",
+    "Add dashboard JSON export documentation.",
+    "Create Notion-to-sprint-state mapping spec."
+  ]
+}
