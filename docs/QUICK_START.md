@@ -65,6 +65,29 @@ You should see the doctor check complete safely and the pytest suite pass.
 
 ---
 
+## 🧪 Daily Local Commands
+
+```bash
+# Human-readable dashboard
+npm run dashboard
+
+# JSON dashboard snapshot
+npm run dashboard:json
+
+# Timestamped local dashboard export
+npm run dashboard:export
+
+# Validate the example sprint-state contract
+npm run sprint:validate
+
+# Full QA sweep when dev dependencies are installed
+npm run qa
+```
+
+Generated dashboard exports are written to `exports/` and are ignored by Git unless a release task explicitly says otherwise.
+
+---
+
 ## ✅ You're Ready
 
 What you have now:
@@ -74,6 +97,8 @@ What you have now:
 - ✅ Core dependencies installed
 - ✅ Orchestrator smoke-tested locally
 - ✅ Test suite ready
+- ✅ Dashboard export command ready
+- ✅ Sprint-state validation command ready
 - ✅ No live deployment or publishing trigger activated
 
 ---
@@ -131,6 +156,12 @@ pip install -r requirements-minimal.txt
 
 ```bash
 pip install -r requirements-minimal.txt
+```
+
+### "QA tools not found"
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ### "API key error"
