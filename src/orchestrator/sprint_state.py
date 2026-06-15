@@ -129,9 +129,7 @@ def _validate_task(
 ) -> None:
     """Validate one task object."""
     if not isinstance(task, dict):
-        errors.append(
-            f"tracks[{track_index}].tasks[{task_index}] must be an object"
-        )
+        errors.append(f"tracks[{track_index}].tasks[{task_index}] must be an object")
         return
 
     for field in ("id", "title", "status", "artifact_path"):
@@ -139,9 +137,7 @@ def _validate_task(
             errors.append(f"tracks[{track_index}].tasks[{task_index}] missing {field}")
 
     if task.get("status") not in VALID_STATUSES:
-        errors.append(
-            f"tracks[{track_index}].tasks[{task_index}].status is invalid"
-        )
+        errors.append(f"tracks[{track_index}].tasks[{task_index}].status is invalid")
 
 
 def _validate_blocker(blocker: Any, index: int, errors: list[str]) -> None:
