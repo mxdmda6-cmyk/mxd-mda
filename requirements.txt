@@ -12,6 +12,7 @@
 # CORE AI & LLM SERVICES
 # ─────────────────────────────────────────────────────────────
 anthropic>=0.18.0               # Claude AI SDK - primary orchestration
+mcp>=1.0.0                      # Model Context Protocol client - live Shopify tools
 google-generativeai>=0.3.0      # Gemini API - multi-agent coordination
 langchain>=0.1.0                # LLM orchestration framework
 langchain-anthropic>=0.1.0      # Anthropic integration for LangChain

@@ -4,55 +4,56 @@
 Claude-powered Lead E-Commerce Manager and Brand Custodian for the
 MXD MDA (Mixed Media) Shopify storefront.
 
-Handles daily commerce operations through a single, brand-consistent persona:
-- Product listings (SEO-optimized, on-brand copy)
-- Operations & fulfillment SOPs (Printify ↔ Shopify)
-- Customer-experience templates and responses
-- Strategic growth (sales analysis, promotional cadence)
+Two modes:
 
-Usage:
-    from orchestrator.store_manager import chat_with_store_manager
+1. Copy-only (no tools) — import and call :func:`chat_with_store_manager`
+   for on-brand drafting (listings, SOPs, customer replies). No Shopify
+   connection required.
 
-    reply = chat_with_store_manager("Write a listing for the Crow Codex print.")
-    print(reply)
+       from orchestrator.store_manager import chat_with_store_manager
+       print(chat_with_store_manager("Draft a listing for the Crow Codex print."))
 
-Live Shopify access (optional):
-    Set ``SHOPIFY_MCP_URL`` to a remote Shopify MCP server (HTTPS) and the
-    persona gains read access to the store via the Anthropic MCP connector —
-    it can look up products, orders, customers, inventory, and analytics
-    instead of only drafting copy. Set ``SHOPIFY_MCP_TOKEN`` if the server
-    requires an OAuth bearer token.
+2. Live operations — run this module as a script to open an interactive
+   session wired to a Shopify MCP server. Claude connects to the store
+   through a local MCP client and calls tools (products, orders, inventory,
+   analytics) to ground its answers, with a write guardrail.
 
-    Writes are OFF by default (destructive/mutating tools are denylisted), in
-    line with the project's posture that live store changes stay disabled
-    unless intentionally activated. Set ``SHOPIFY_ALLOW_WRITES=true`` to let
-    the persona create/update products, collections, discounts, and inventory.
+       export ANTHROPIC_API_KEY=...
+       export SHOPIFY_MCP_URL=https://<your-shopify-mcp>/sse
+       export SHOPIFY_ALLOW_WRITES=false      # default; true to permit writes
+       python src/orchestrator/store_manager.py
 
 Environment:
-    ANTHROPIC_API_KEY   Required (resolved by the SDK).
-    SHOPIFY_MCP_URL     Optional — enables live Shopify tools when set.
-    SHOPIFY_MCP_TOKEN   Optional — OAuth bearer token for the MCP server.
+    ANTHROPIC_API_KEY    Required (resolved by the SDK).
+    SHOPIFY_MCP_URL      Required for live mode — the MCP server SSE endpoint.
+    SHOPIFY_MCP_TOKEN    Optional — sent as an OAuth bearer token.
     SHOPIFY_ALLOW_WRITES Optional — "true"/"1"/"yes" to permit write tools.
+
+Live mode requires the ``mcp`` package (``pip install mcp``); copy-only mode
+does not.
 """
 
 from __future__ import annotations
 
+import asyncio
+import json
 import os
 from typing import Any
 
 import anthropic
+from anthropic import AsyncAnthropic
 
 # Default to the most capable Opus-tier model. The retired
 # claude-3-5-sonnet-20241022 (sunset 2025-10-28) is intentionally not used.
 MODEL = "claude-opus-4-8"
 MAX_TOKENS = 4096
 
-# Beta header for the remote MCP connector (mcp_servers + mcp_toolset).
-MCP_BETA = "mcp-client-2025-11-20"
+# Bound the agentic loop so a misbehaving turn can't call tools forever.
+MAX_TOOL_STEPS = 8
 
-# Shopify MCP tools that create, mutate, or delete store state. Denylisted
-# unless SHOPIFY_ALLOW_WRITES is enabled, keeping the persona read-only by
-# default. Names match the Shopify MCP server's tool identifiers.
+# Known Shopify MCP tools that create, mutate, or delete store state. Used as
+# an explicit denylist; the prefix heuristic below catches dynamic/unknown
+# write tools too. Names match the Shopify MCP server's tool identifiers.
 SHOPIFY_WRITE_TOOLS = frozenset(
     {
         "create-product",
@@ -69,34 +70,28 @@ SHOPIFY_WRITE_TOOLS = frozenset(
     }
 )
 
+# Verb prefixes that imply a mutating operation. Matched against the tool name
+# after normalizing hyphens to underscores, so "create-product" and
+# "create_product" are both caught.
+_WRITE_PREFIXES = (
+    "create",
+    "update",
+    "delete",
+    "set",
+    "adjust",
+    "cancel",
+    "mark",
+    "add",
+    "remove",
+    "bulk",
+    "publish",
+    "archive",
+    "switch",
+)
 
-def _env_flag(name: str) -> bool:
-    """Return True when an env var is set to a truthy string."""
-    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
-
-
-def _shopify_mcp_config() -> tuple[list[dict[str, Any]], list[dict[str, Any]]] | None:
-    """Build (mcp_servers, tools) for the Shopify MCP connector.
-
-    Returns None when ``SHOPIFY_MCP_URL`` is unset, in which case the persona
-    runs without live store access. When writes are disabled (the default),
-    every tool in :data:`SHOPIFY_WRITE_TOOLS` is denylisted.
-    """
-    url = os.environ.get("SHOPIFY_MCP_URL", "").strip()
-    if not url:
-        return None
-
-    server: dict[str, Any] = {"type": "url", "url": url, "name": "shopify"}
-    token = os.environ.get("SHOPIFY_MCP_TOKEN", "").strip()
-    if token:
-        server["authorization_token"] = token
-
-    toolset: dict[str, Any] = {"type": "mcp_toolset", "mcp_server_name": "shopify"}
-    if not _env_flag("SHOPIFY_ALLOW_WRITES"):
-        toolset["configs"] = {
-            name: {"enabled": False} for name in sorted(SHOPIFY_WRITE_TOOLS)
-        }
-    return [server], [toolset]
+_NORMALIZED_WRITE_TOOLS = frozenset(
+    name.replace("-", "_") for name in SHOPIFY_WRITE_TOOLS
+)
 
 
 # The system prompt establishes Claude's role, brand voice, and operational
@@ -135,11 +130,36 @@ for technical specs, and 5-10 SEO keywords for product descriptions.
 - Provide step-by-step, actionable solutions for technical issues.
 - Explicitly ask for missing crucial information before generating a final \
 response.
+
+Live Store Operations (when Shopify tools are available):
+- Verify facts with your Shopify tools before reporting them; never guess \
+inventory counts, prices, or order status.
+- Keep operational reporting concise, precise, and professional.
+- Before any action that changes store data (price, inventory, product, \
+collection, discount, or order state), state plainly what you are about to \
+change and why, then proceed.
 """.strip()
 
 
+def _env_flag(name: str) -> bool:
+    """Return True when an env var is set to a truthy string."""
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def is_write_operation(tool_name: str) -> bool:
+    """Heuristically decide whether a tool name mutates store state.
+
+    Combines an explicit denylist with a verb-prefix check on the
+    separator-normalized name, plus a catch-all for GraphQL mutations.
+    """
+    norm = tool_name.strip().lower().replace("-", "_")
+    if norm in _NORMALIZED_WRITE_TOOLS or "mutation" in norm:
+        return True
+    return norm.split("_", 1)[0] in _WRITE_PREFIXES
+
+
 def _client(api_key: str | None = None) -> anthropic.Anthropic:
-    """Build an Anthropic client.
+    """Build a sync Anthropic client.
 
     Resolves credentials from ``ANTHROPIC_API_KEY`` (or an ``ant`` profile)
     by default; pass ``api_key`` only when you must inject a specific key.
@@ -149,13 +169,20 @@ def _client(api_key: str | None = None) -> anthropic.Anthropic:
     return anthropic.Anthropic()
 
 
+def _text(response: anthropic.types.Message) -> str:
+    """Concatenate the text blocks of a response (skips thinking/tool blocks)."""
+    return "\n".join(
+        block.text for block in response.content if block.type == "text"
+    ).strip()
+
+
 def chat_with_store_manager(
     user_message: str,
     *,
     client: anthropic.Anthropic | None = None,
     max_tokens: int = MAX_TOKENS,
 ) -> str:
-    """Send a message to the MXD MDA Store Manager persona.
+    """Draft an on-brand reply from the Store Manager persona (no tools).
 
     Args:
         user_message: The operator or customer-facing request.
@@ -168,106 +195,226 @@ def chat_with_store_manager(
     Note:
         Creativity-vs-precision is steered through the system prompt and
         adaptive thinking rather than ``temperature`` — sampling parameters
-        are not supported on Opus 4.8 and would raise a 400.
-
-        When ``SHOPIFY_MCP_URL`` is set, the persona is given live Shopify
-        tools via the MCP connector and may query (and, if writes are
-        enabled, modify) the store while answering.
+        are not supported on Opus 4.8 and would raise a 400. For live store
+        access, run this module as a script (see :func:`run_orchestrator`).
     """
     client = client or _client()
-    messages: list[dict[str, Any]] = [{"role": "user", "content": user_message}]
-    mcp = _shopify_mcp_config()
     try:
-        if mcp is not None:
-            response = _run_with_shopify(client, messages, max_tokens, *mcp)
-        else:
-            response = client.messages.create(
-                model=MODEL,
-                max_tokens=max_tokens,
-                system=STORE_MANAGER_SYSTEM_PROMPT,
-                thinking={"type": "adaptive"},
-                messages=messages,
-            )
-    except anthropic.APIError as exc:
-        return f"An error occurred: {exc}"
-
-    return _text(response)
-
-
-def _run_with_shopify(
-    client: anthropic.Anthropic,
-    messages: list[dict[str, Any]],
-    max_tokens: int,
-    mcp_servers: list[dict[str, Any]],
-    tools: list[dict[str, Any]],
-    *,
-    max_continuations: int = 5,
-) -> anthropic.types.Message:
-    """Call the API with the Shopify MCP connector attached.
-
-    The connector executes MCP tools server-side. If the server-side loop hits
-    its iteration limit it returns ``stop_reason == "pause_turn"``; re-send to
-    resume, bounded by ``max_continuations``.
-    """
-    response = client.beta.messages.create(
-        model=MODEL,
-        max_tokens=max_tokens,
-        system=STORE_MANAGER_SYSTEM_PROMPT,
-        thinking={"type": "adaptive"},
-        mcp_servers=mcp_servers,
-        tools=tools,
-        betas=[MCP_BETA],
-        messages=messages,
-    )
-    for _ in range(max_continuations):
-        if response.stop_reason != "pause_turn":
-            break
-        messages = [*messages, {"role": "assistant", "content": response.content}]
-        response = client.beta.messages.create(
+        response = client.messages.create(
             model=MODEL,
             max_tokens=max_tokens,
             system=STORE_MANAGER_SYSTEM_PROMPT,
             thinking={"type": "adaptive"},
-            mcp_servers=mcp_servers,
+            messages=[{"role": "user", "content": user_message}],
+        )
+    except anthropic.APIError as exc:
+        return f"An error occurred: {exc}"
+    return _text(response)
+
+
+# --------------------------------------------------------------------------- #
+# Live operations: local MCP client + manual agentic loop
+# --------------------------------------------------------------------------- #
+
+
+def _preview(value: Any, limit: int = 80) -> str:
+    """Render a compact, truncated preview of tool input for logging."""
+    try:
+        text = json.dumps(value, separators=(",", ":"), default=str)
+    except (TypeError, ValueError):
+        text = str(value)
+    return text if len(text) <= limit else text[: limit - 1] + "…"
+
+
+def _mcp_result_text(result: Any) -> str:
+    """Flatten an MCP CallToolResult into text for a tool_result block."""
+    items = getattr(result, "content", None) or []
+    parts = [getattr(item, "text", None) or str(item) for item in items]
+    return "\n".join(parts).strip() or "(tool returned no content)"
+
+
+async def _execute_tool(
+    mcp_session: Any, block: Any, *, allow_writes: bool
+) -> dict[str, Any]:
+    """Run one tool call via MCP, enforcing the write guardrail."""
+    if is_write_operation(block.name) and not allow_writes:
+        print(f"  ⚠️  Blocked write '{block.name}' (SHOPIFY_ALLOW_WRITES=false)")
+        return {
+            "type": "tool_result",
+            "tool_use_id": block.id,
+            "content": (
+                "Error: Write operations are disabled. Tell the user they must "
+                "set SHOPIFY_ALLOW_WRITES=true to perform this action."
+            ),
+            "is_error": True,
+        }
+
+    print(f"  ⚡ {block.name}({_preview(block.input)})")
+    try:
+        result = await mcp_session.call_tool(block.name, block.input)
+    except Exception as exc:  # noqa: BLE001 - surface any tool failure to Claude
+        return {
+            "type": "tool_result",
+            "tool_use_id": block.id,
+            "content": f"Tool execution failed: {exc}",
+            "is_error": True,
+        }
+    return {
+        "type": "tool_result",
+        "tool_use_id": block.id,
+        "content": _mcp_result_text(result),
+        "is_error": bool(getattr(result, "isError", False)),
+    }
+
+
+async def _run_agent_turn(
+    client: AsyncAnthropic,
+    mcp_session: Any,
+    tools: list[dict[str, Any]],
+    messages: list[dict[str, Any]],
+    *,
+    allow_writes: bool,
+) -> str:
+    """Drive one user turn to completion, executing tool calls along the way.
+
+    Loops until Claude stops requesting tools (``end_turn``), handling multiple
+    tool_use blocks per response and bounded by :data:`MAX_TOOL_STEPS`.
+    """
+    for _ in range(MAX_TOOL_STEPS):
+        response = await client.messages.create(
+            model=MODEL,
+            max_tokens=MAX_TOKENS,
+            system=STORE_MANAGER_SYSTEM_PROMPT,
+            thinking={"type": "adaptive"},
             tools=tools,
-            betas=[MCP_BETA],
             messages=messages,
         )
-    return response
+        # Append full content (incl. thinking) so the turn replays cleanly.
+        messages.append({"role": "assistant", "content": response.content})
+
+        if response.stop_reason != "tool_use":
+            return _text(response)
+
+        results = [
+            await _execute_tool(mcp_session, block, allow_writes=allow_writes)
+            for block in response.content
+            if block.type == "tool_use"
+        ]
+        messages.append({"role": "user", "content": results})
+
+    return "Reached the maximum number of tool steps for this turn."
 
 
-def _text(response: anthropic.types.Message) -> str:
-    """Extract concatenated text blocks from a response (skips thinking/tools)."""
-    return "\n".join(
-        block.text for block in response.content if block.type == "text"
-    ).strip()
+async def _chat_loop(
+    client: AsyncAnthropic,
+    mcp_session: Any,
+    tools: list[dict[str, Any]],
+    *,
+    allow_writes: bool,
+) -> None:
+    """Interactive read-eval-print loop over a live MCP session."""
+    messages: list[dict[str, Any]] = []
+    print("\n🤖 MXD-MDA Operations ready. Type 'exit' to quit.")
+    print("-" * 50)
+
+    while True:
+        user_input = (await asyncio.to_thread(input, "\nManager Input: ")).strip()
+        if user_input.lower() in {"exit", "quit"}:
+            print("Shutting down operations manager. Goodbye!")
+            return
+        if not user_input:
+            continue
+
+        checkpoint = len(messages)
+        messages.append({"role": "user", "content": user_input})
+        try:
+            reply = await _run_agent_turn(
+                client, mcp_session, tools, messages, allow_writes=allow_writes
+            )
+            print(f"\nAI: {reply}")
+        except anthropic.APIError as exc:
+            print(f"\n❌ Operation failed: {exc}")
+            # Roll back the whole failed turn so history stays consistent
+            # (no dangling tool_use without a matching tool_result).
+            del messages[checkpoint:]
+
+
+async def run_orchestrator() -> None:
+    """Connect Claude to the Shopify MCP server and start an interactive session."""
+    url = os.environ.get("SHOPIFY_MCP_URL", "").strip()
+    if not url:
+        print("SHOPIFY_MCP_URL is not set; set it to enable live store access.")
+        return
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        print("ANTHROPIC_API_KEY is not set; set it before running.")
+        return
+
+    try:
+        from mcp.client.session import ClientSession
+        from mcp.client.sse import sse_client
+    except ImportError:
+        print("The 'mcp' package is required for live mode: pip install mcp")
+        return
+
+    allow_writes = _env_flag("SHOPIFY_ALLOW_WRITES")
+    headers: dict[str, str] = {}
+    token = os.environ.get("SHOPIFY_MCP_TOKEN", "").strip()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    print("🔌 Initializing MXD-MDA Operations Manager...")
+    client = AsyncAnthropic()
+    try:
+        async with (
+            sse_client(url, headers=headers or None) as streams,
+            ClientSession(streams[0], streams[1]) as mcp_session,
+        ):
+            await mcp_session.initialize()
+            print("✅ Connected to Shopify MCP server.")
+
+            listed = await mcp_session.list_tools()
+            tools = [
+                {
+                    "name": tool.name,
+                    "description": tool.description or "",
+                    "input_schema": tool.inputSchema,
+                }
+                for tool in listed.tools
+            ]
+            writeable = sum(1 for t in tools if is_write_operation(t["name"]))
+            print(f"🛠️  {len(tools)} tools loaded ({writeable} write-capable).")
+            print(f"🔒 Write operations allowed: {allow_writes}")
+
+            await _chat_loop(client, mcp_session, tools, allow_writes=allow_writes)
+    except Exception as exc:  # noqa: BLE001 - report connection failures plainly
+        print(f"❌ Connection error: {exc}")
+        print(
+            "Ensure SHOPIFY_MCP_URL is reachable from this host and "
+            "SHOPIFY_MCP_TOKEN (if required) is valid."
+        )
 
 
 def _main() -> None:
-    """Initialize the persona and run a launch-readiness smoke prompt."""
-    print("Initializing MXD MDA Store Manager...\n")
-    print("-" * 50)
+    """Run live operations if a Shopify MCP server is configured, else a demo."""
+    if os.environ.get("SHOPIFY_MCP_URL", "").strip():
+        asyncio.run(run_orchestrator())
+        return
 
+    print("Initializing MXD MDA Store Manager (copy-only mode)...")
+    print("Set SHOPIFY_MCP_URL to enable live store operations.\n")
+    print("-" * 50)
     if not os.environ.get("ANTHROPIC_API_KEY"):
         print("ANTHROPIC_API_KEY is not set; set it before running this demo.")
         return
-
-    if _shopify_mcp_config() is not None:
-        mode = "read+write" if _env_flag("SHOPIFY_ALLOW_WRITES") else "read-only"
-        print(f"Shopify MCP: connected ({mode}).")
-    else:
-        print("Shopify MCP: not configured (set SHOPIFY_MCP_URL to enable).")
 
     initial_prompt = (
         "Acknowledge these instructions by briefly summarizing your role and "
         "outlining the first three steps we should take to ensure the 'First "
         "Drop' collection is fully optimized for launch."
     )
-
     print(f"User Request: {initial_prompt}\n")
     print("-" * 50)
     print("Claude (Store Manager) is composing...\n")
-
     print(chat_with_store_manager(initial_prompt))
 
 
