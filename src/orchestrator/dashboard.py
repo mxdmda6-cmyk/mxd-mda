@@ -85,7 +85,7 @@ def current_snapshot() -> DashboardSnapshot:
                 name="Coagulation",
                 meaning="Ship stable artifacts",
                 status="planned",
-                summary="Next target: dashboard export and sprint-state contract.",
+                summary="Next target: PR queue triage and verified CI health.",
             ),
         ),
         risks=(
@@ -104,11 +104,16 @@ def current_snapshot() -> DashboardSnapshot:
                 level="green",
                 mitigation="Route story changes through canon review before implementation.",
             ),
+            ProductionRisk(
+                name="Stale pull request queue",
+                level="yellow",
+                mitigation="Close obsolete dependency drift and triage remaining non-mergeable PRs before merge.",
+            ),
         ),
         next_moves=(
-            "Add dashboard JSON export command.",
-            "Create sprint-state schema for Notion/GitHub alignment.",
-            "Patch CI failures immediately when workflow results appear.",
+            "Confirm GitHub Actions results after the health-status commit lands.",
+            "Triage remaining open PRs into merge, rebase, or close lanes.",
+            "Build the local Notion export converter behind the sprint-state schema gate.",
         ),
     )
 
