@@ -33,7 +33,7 @@ requests>=2.31.0                # HTTP library for API calls
 # ─────────────────────────────────────────────────────────────
 # VECTOR DATABASE & EMBEDDINGS
 # ─────────────────────────────────────────────────────────────
-qdrant-client>=1.7.0            # Vector database for semantic search
+qdrant-client>=1.18.0            # Vector database for semantic search
 sentence-transformers>=2.3.0    # Embeddings generation
 chromadb>=0.4.0                 # Alternative vector DB (optional)
 
