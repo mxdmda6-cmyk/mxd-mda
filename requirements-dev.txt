@@ -2,6 +2,6 @@
 
 -r requirements-minimal.txt
 
-black>=24.1.0
+black==24.1.0
 mypy>=1.8.0
 ruff>=0.2.0
