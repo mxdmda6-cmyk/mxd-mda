@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 
 from .db import insert_run
@@ -42,16 +43,22 @@ def step_classify_archetype(ctx: dict[str, Any], params: dict[str, Any]) -> None
         ctx["narrative_line"] = "The Orb remains silent, watching the signal pass."
 
 
+def _tokens(text: str) -> set[str]:
+    """Return lowercase word tokens for safe routing checks."""
+    return set(re.findall(r"[a-z0-9_]+", text.lower()))
+
+
 def step_route_action(ctx: dict[str, Any], params: dict[str, Any]) -> None:
     """Route action safely.
 
-    The default action is DRY_RUN. No v0 route is allowed to publish.
+    The default action is DRY_RUN. Route keywords must be standalone tokens so
+    words like "threshold" do not accidentally trigger HOLD.
     """
-    text = (ctx.get("clean_text") or "").lower()
-    if "draft" in text or "wip" in text or "hold" in text:
+    words = _tokens(ctx.get("clean_text") or "")
+    if words & {"draft", "wip", "hold"}:
         ctx["action"] = "HOLD"
         ctx["schedule_for"] = None
-    elif "tomorrow" in text or "schedule" in text:
+    elif words & {"tomorrow", "schedule"}:
         ctx["action"] = "SCHEDULE_DRY_RUN"
         ctx["schedule_for"] = "tomorrow_9am_local"
     else:
