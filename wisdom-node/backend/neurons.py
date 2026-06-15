@@ -24,7 +24,7 @@ class SocialNeuron:
             "would_publish": True,
             "platforms": platforms,
             "scheduled_for": when,
-            "prepared_at_utc": dt.datetime.now(dt.UTC).isoformat(),
+            "prepared_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
             "external_ids": {},
             "preview_text": text,
         }
