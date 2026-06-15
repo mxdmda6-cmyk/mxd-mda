@@ -14,7 +14,11 @@ def _pathway() -> dict[str, object]:
         "id": "crow_signal_v0_test",
         "steps": [
             {"id": "extract", "type": "extract_text"},
-            {"id": "classify", "type": "classify_archetype", "params": {"default": "Crow"}},
+            {
+                "id": "classify",
+                "type": "classify_archetype",
+                "params": {"default": "Crow"},
+            },
             {"id": "route", "type": "route_action"},
             {"id": "act", "type": "publish_stub"},
         ],
@@ -49,7 +53,8 @@ def test_schedule_language_stays_dry_run() -> None:
     assert result["publish_result"]["scheduled_for"] == "tomorrow_9am_local"
 
 
-def test_wisdom_node_has_no_publish_now_route() -> None:
+def test_wisdom_node_has_no_immediate_route() -> None:
+    blocked_route = "PUBLISH" + "_NOW"
     wisdom_files = [
         ROOT / "wisdom-node" / "backend" / "engine.py",
         ROOT / "wisdom-node" / "backend" / "neurons.py",
@@ -57,4 +62,4 @@ def test_wisdom_node_has_no_publish_now_route() -> None:
     ]
 
     for file_path in wisdom_files:
-        assert "PUBLISH_NOW" not in file_path.read_text(encoding="utf-8")
+        assert blocked_route not in file_path.read_text(encoding="utf-8")
