@@ -339,8 +339,80 @@ async def _chat_loop(
             del messages[checkpoint:]
 
 
+async def _serve_session(
+    client: AsyncAnthropic,
+    streams: Any,
+    *,
+    allow_writes: bool,
+    flag: dict[str, bool],
+) -> None:
+    """Run an interactive session over an established MCP transport.
+
+    ``flag["connected"]`` is set once the session initializes, so the caller
+    can distinguish a connection failure (try the next transport) from an
+    error after a successful connect (report it, don't retry).
+
+    ``streams`` may be a 2-tuple (SSE) or 3-tuple (Streamable HTTP); only the
+    first two — the read and write streams — are used.
+    """
+    from mcp.client.session import ClientSession
+
+    async with ClientSession(streams[0], streams[1]) as mcp_session:
+        await mcp_session.initialize()
+        flag["connected"] = True
+        print("✅ Connected to Shopify MCP server.")
+
+        listed = await mcp_session.list_tools()
+        tools = [
+            {
+                "name": tool.name,
+                "description": tool.description or "",
+                "input_schema": tool.inputSchema,
+            }
+            for tool in listed.tools
+        ]
+        writeable = sum(1 for t in tools if is_write_operation(t["name"]))
+        print(f"🛠️  {len(tools)} tools loaded ({writeable} write-capable).")
+        print(f"🔒 Write operations allowed: {allow_writes}")
+
+        await _chat_loop(client, mcp_session, tools, allow_writes=allow_writes)
+
+
+async def _try_transport(
+    client: AsyncAnthropic,
+    open_transport: Any,
+    url: str,
+    headers: dict[str, str] | None,
+    *,
+    allow_writes: bool,
+    label: str,
+) -> bool:
+    """Attempt one transport. Return True if it connected (so don't try others).
+
+    A failure *before* connecting returns False so the caller can fall back; a
+    failure *after* connecting is reported here and still returns True.
+    """
+    flag = {"connected": False}
+    print(f"📡 Attempting {label} connection...")
+    try:
+        async with open_transport(url, headers=headers) as streams:
+            await _serve_session(client, streams, allow_writes=allow_writes, flag=flag)
+        return True
+    except Exception as exc:  # noqa: BLE001 - decide retry vs. report
+        if flag["connected"]:
+            print(f"❌ Session error after connecting via {label}: {exc}")
+            return True
+        print(f"⚠️  {label} connection failed: {exc}")
+        return False
+
+
 async def run_orchestrator() -> None:
-    """Connect Claude to the Shopify MCP server and start an interactive session."""
+    """Connect Claude to the Shopify MCP server and start an interactive session.
+
+    Tries SSE first, then falls back to Streamable HTTP. Fallback applies only
+    to connection failures — an error after a successful connect is reported,
+    not retried on the other transport.
+    """
     url = os.environ.get("SHOPIFY_MCP_URL", "").strip()
     if not url:
         print("SHOPIFY_MCP_URL is not set; set it to enable live store access.")
@@ -350,48 +422,42 @@ async def run_orchestrator() -> None:
         return
 
     try:
-        from mcp.client.session import ClientSession
         from mcp.client.sse import sse_client
     except ImportError:
         print("The 'mcp' package is required for live mode: pip install mcp")
         return
+    try:
+        from mcp.client.streamable_http import streamablehttp_client
+    except ImportError:
+        streamablehttp_client = None
 
     allow_writes = _env_flag("SHOPIFY_ALLOW_WRITES")
     headers: dict[str, str] = {}
     token = os.environ.get("SHOPIFY_MCP_TOKEN", "").strip()
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    hdrs = headers or None
 
     print("🔌 Initializing MXD-MDA Operations Manager...")
     client = AsyncAnthropic()
-    try:
-        async with (
-            sse_client(url, headers=headers or None) as streams,
-            ClientSession(streams[0], streams[1]) as mcp_session,
+
+    transports: list[tuple[str, Any]] = [("SSE", sse_client)]
+    if streamablehttp_client is not None:
+        transports.append(("Streamable HTTP", streamablehttp_client))
+
+    for index, (label, open_transport) in enumerate(transports):
+        if await _try_transport(
+            client, open_transport, url, hdrs, allow_writes=allow_writes, label=label
         ):
-            await mcp_session.initialize()
-            print("✅ Connected to Shopify MCP server.")
+            return
+        if index + 1 < len(transports):
+            print("🔄 Falling back to the next transport...")
 
-            listed = await mcp_session.list_tools()
-            tools = [
-                {
-                    "name": tool.name,
-                    "description": tool.description or "",
-                    "input_schema": tool.inputSchema,
-                }
-                for tool in listed.tools
-            ]
-            writeable = sum(1 for t in tools if is_write_operation(t["name"]))
-            print(f"🛠️  {len(tools)} tools loaded ({writeable} write-capable).")
-            print(f"🔒 Write operations allowed: {allow_writes}")
-
-            await _chat_loop(client, mcp_session, tools, allow_writes=allow_writes)
-    except Exception as exc:  # noqa: BLE001 - report connection failures plainly
-        print(f"❌ Connection error: {exc}")
-        print(
-            "Ensure SHOPIFY_MCP_URL is reachable from this host and "
-            "SHOPIFY_MCP_TOKEN (if required) is valid."
-        )
+    print("❌ Could not connect to the Shopify MCP server on any transport.")
+    print(
+        "Verify SHOPIFY_MCP_URL is reachable from this host and "
+        "SHOPIFY_MCP_TOKEN (if required) is valid."
+    )
 
 
 def _main() -> None:
