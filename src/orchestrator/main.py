@@ -105,7 +105,7 @@ def export_dashboard(
             "-o",
             help="Directory for generated dashboard JSON exports.",
         ),
-    ] = Path("exports")
+    ] = Path("exports"),
 ) -> None:
     """Write the dashboard snapshot to a timestamped JSON file."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -155,7 +155,9 @@ def doctor() -> None:
 
     for flag in FEATURE_FLAGS:
         value = _flag_value(flag)
-        style = "green" if value == "false" or flag == "ENABLE_ANALYTICS" else "yellow"
+        style = (
+            "green" if value == "false" or flag == "ENABLE_ANALYTICS" else "yellow"
+        )
         table.add_row(flag, f"[{style}]{value}[/{style}]")
 
     console.print(table)
