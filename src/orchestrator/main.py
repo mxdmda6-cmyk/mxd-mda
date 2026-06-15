@@ -76,9 +76,11 @@ def dashboard(
     ]
     next_moves = "\n".join(f"• {move}" for move in snapshot.next_moves)
     stage_lines = "\n".join(
-        f"✅ {stage.name}: {stage.summary}"
-        if stage.status == "done"
-        else f"⚗️ {stage.name}: {stage.summary}"
+        (
+            f"✅ {stage.name}: {stage.summary}"
+            if stage.status == "done"
+            else f"⚗️ {stage.name}: {stage.summary}"
+        )
         for stage in active_stages
     )
 
@@ -155,9 +157,7 @@ def doctor() -> None:
 
     for flag in FEATURE_FLAGS:
         value = _flag_value(flag)
-        style = (
-            "green" if value == "false" or flag == "ENABLE_ANALYTICS" else "yellow"
-        )
+        style = "green" if value == "false" or flag == "ENABLE_ANALYTICS" else "yellow"
         table.add_row(flag, f"[{style}]{value}[/{style}]")
 
     console.print(table)
