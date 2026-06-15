@@ -38,7 +38,9 @@ def step_classify_archetype(ctx: dict[str, Any], params: dict[str, Any]) -> None
     ctx["archetype_hits"] = hits
 
     if ctx["archetype"] == "Crow":
-        ctx["narrative_line"] = "The Orb recognizes Crow. The threshold opens in dry-run."
+        ctx["narrative_line"] = (
+            "The Orb recognizes Crow. The threshold opens in dry-run."
+        )
     else:
         ctx["narrative_line"] = "The Orb remains silent, watching the signal pass."
 
