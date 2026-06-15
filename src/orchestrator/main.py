@@ -44,7 +44,7 @@ FEATURE_FLAGS = (
 )
 
 app = typer.Typer(help="🜂 MXD-MDA Orchestrator - The Alchemical Command Center")
-console = Console()
+console = Console(color_system=None, highlight=False)
 
 
 def _flag_value(name: str) -> str:
