@@ -68,7 +68,7 @@ def dashboard(
     snapshot = current_snapshot()
 
     if json_output:
-        console.print(_dashboard_payload(), end="")
+        typer.echo(_dashboard_payload(), nl=False)
         return
 
     active_stages = [
