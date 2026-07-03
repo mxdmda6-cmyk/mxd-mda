@@ -61,25 +61,35 @@ def current_snapshot() -> DashboardSnapshot:
                 name="Prima Materia",
                 meaning="Raw material gathered and named",
                 status="done",
-                summary="Repository structure, docs, and safe config spine established.",
+                summary=(
+                    "Repository structure, docs, and safe config spine " "established."
+                ),
             ),
             DashboardStage(
                 name="Dissolution",
                 meaning="Break false structure and drift",
                 status="done",
-                summary="Stale metadata, setup docs, and unsafe placeholders corrected.",
+                summary=(
+                    "Stale metadata, setup docs, and unsafe placeholders " "corrected."
+                ),
             ),
             DashboardStage(
                 name="Separation",
                 meaning="Protect what matters from noise",
                 status="active",
-                summary="Tests, gates, and feature flags separate live work from planned work.",
+                summary=(
+                    "Tests, gates, and feature flags separate live work "
+                    "from planned work."
+                ),
             ),
             DashboardStage(
                 name="Conjunction",
                 meaning="Reconnect systems cleanly",
                 status="planned",
-                summary="Notion/GitHub production sync remains gated until schema is confirmed.",
+                summary=(
+                    "Notion/GitHub production sync remains gated until "
+                    "schema is confirmed."
+                ),
             ),
             DashboardStage(
                 name="Coagulation",
@@ -92,7 +102,10 @@ def current_snapshot() -> DashboardSnapshot:
             ProductionRisk(
                 name="Automation overreach",
                 level="yellow",
-                mitigation="Keep publishing, social, email, and bot deployment disabled by default.",
+                mitigation=(
+                    "Keep publishing, social, email, and bot deployment "
+                    "disabled by default."
+                ),
             ),
             ProductionRisk(
                 name="Documentation drift",
@@ -102,18 +115,26 @@ def current_snapshot() -> DashboardSnapshot:
             ProductionRisk(
                 name="Canon drift",
                 level="green",
-                mitigation="Route story changes through canon review before implementation.",
+                mitigation=(
+                    "Route story changes through canon review before " "implementation."
+                ),
             ),
             ProductionRisk(
                 name="Stale pull request queue",
                 level="yellow",
-                mitigation="Close obsolete dependency drift and triage remaining non-mergeable PRs before merge.",
+                mitigation=(
+                    "Close obsolete dependency drift and triage remaining "
+                    "non-mergeable PRs before merge."
+                ),
             ),
         ),
         next_moves=(
             "Confirm GitHub Actions results after the health-status commit lands.",
             "Triage remaining open PRs into merge, rebase, or close lanes.",
-            "Build the local Notion export converter behind the sprint-state schema gate.",
+            (
+                "Build the local Notion export converter behind the "
+                "sprint-state schema gate."
+            ),
         ),
     )
 
