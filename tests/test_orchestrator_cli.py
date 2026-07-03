@@ -5,7 +5,6 @@ from typer.testing import CliRunner
 
 from src.orchestrator.main import app
 
-
 runner = CliRunner()
 
 
