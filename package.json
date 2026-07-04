@@ -12,7 +12,11 @@
     "version": "python src/orchestrator/main.py version",
     "test": "pytest -q",
     "qa": "python -m compileall src tests && pytest -q && ruff check src tests && black --check src tests && mypy src tests --ignore-missing-imports",
-    "build": "python src/orchestrator/main.py version"
+    "build": "python src/orchestrator/main.py version",
+    "sync:shopify:listen": "node scripts/shopify-github-sync/server.js",
+    "sync:shopify:bulk": "node scripts/shopify-github-sync/bulk-import.js --bulk",
+    "sync:shopify:bulk:dry-run": "node scripts/shopify-github-sync/bulk-import.js --bulk --dry-run",
+    "sync:shopify:register-webhook": "node scripts/shopify-github-sync/register-webhook.js"
   },
   "keywords": [
     "mxd-mda",
