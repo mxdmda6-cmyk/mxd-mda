@@ -53,7 +53,16 @@ export async function* fetchAllProducts({ pageSize = 100 } = {}) {
 }
 
 function stripHtml(html) {
-  return html.replace(/<[^>]*>/g, '').trim();
+  // Loop to a fixed point: a single pass can be reconstructed by crafted
+  // input (e.g. "<<script>script>"), which is exactly what CodeQL's
+  // "incomplete multi-character sanitization" check flags.
+  let previous;
+  let current = html;
+  do {
+    previous = current;
+    current = previous.replace(/<[^>]*>/g, '');
+  } while (current !== previous);
+  return current.trim();
 }
 
 export function buildItemBody(product) {
