@@ -12,9 +12,11 @@ Features:
 Implementation: Week 2
 """
 
+from typing import Optional
+
 
 def generate_content(
-    content_type: str, platform: str = "general", context: str | None = None
+    content_type: str, platform: str = "general", context: Optional[str] = None
 ) -> str:
     """
     Generate content using Claude AI.
