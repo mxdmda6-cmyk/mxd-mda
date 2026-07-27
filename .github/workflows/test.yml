@@ -37,7 +37,21 @@ jobs:
           uv run python src/orchestrator/main.py version
           uv run python src/orchestrator/main.py doctor
 
-      - name: Run pytest
+      - name: Test existing production spine
+        run: |
+          uv run pytest \
+            tests/test_dashboard_model.py \
+            tests/test_env_template.py \
+            tests/test_orchestrator_cli.py \
+            tests/test_sprint_state.py
+
+      - name: Test Integration Gateway
+        run: uv run pytest tests/test_api_gateway.py
+
+      - name: Test Command Ledger converter
+        run: uv run pytest tests/test_notion_to_manifest.py
+
+      - name: Run coverage suite
         run: uv run pytest --cov=src --cov-report=term-missing
 
       - name: Lint with Ruff
