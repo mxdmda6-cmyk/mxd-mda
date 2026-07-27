@@ -38,20 +38,7 @@ jobs:
           uv run python src/orchestrator/main.py doctor
 
       - name: Test dashboard model
-        id: dashboard_tests
-        continue-on-error: true
-        run: uv run pytest tests/test_dashboard_model.py --junitxml=dashboard-test-report.xml
-
-      - name: Upload dashboard test report
-        if: steps.dashboard_tests.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: dashboard-test-report
-          path: dashboard-test-report.xml
-
-      - name: Enforce dashboard test result
-        if: steps.dashboard_tests.outcome == 'failure'
-        run: exit 1
+        run: uv run pytest tests/test_dashboard_model.py
 
       - name: Test environment template
         run: uv run pytest tests/test_env_template.py
@@ -72,7 +59,20 @@ jobs:
         run: uv run pytest --cov=src --cov-report=term-missing
 
       - name: Lint with Ruff
-        run: uv run ruff check src tests migrations
+        id: ruff_lint
+        continue-on-error: true
+        run: uv run ruff check src tests migrations --output-format=json > ruff-report.json
+
+      - name: Upload Ruff report
+        if: steps.ruff_lint.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruff-report
+          path: ruff-report.json
+
+      - name: Enforce Ruff result
+        if: steps.ruff_lint.outcome == 'failure'
+        run: exit 1
 
       - name: Check formatting with Ruff
         run: uv run ruff format --check src tests migrations
