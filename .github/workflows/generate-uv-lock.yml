@@ -1,18 +1,26 @@
-name: Generate uv lock for hardening branch
+name: Normalize hardening branch
 
 on:
   push:
     branches: [agent/stack-hardening-v01]
-    paths: [pyproject.toml]
+    paths:
+      - pyproject.toml
+      - src/**
+      - tests/**
+      - migrations/**
   pull_request:
     branches: [main]
-    paths: [pyproject.toml]
+    paths:
+      - pyproject.toml
+      - src/**
+      - tests/**
+      - migrations/**
 
 permissions:
   contents: write
 
 jobs:
-  lock:
+  normalize:
     if: github.head_ref == 'agent/stack-hardening-v01' || github.ref_name == 'agent/stack-hardening-v01'
     runs-on: ubuntu-latest
     steps:
@@ -22,15 +30,21 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.10.0"
-      - name: Generate lockfile
-        run: uv lock
-      - name: Commit lockfile
+      - name: Lock and sync
         run: |
-          if [ -z "$(git status --porcelain -- uv.lock)" ]; then
+          uv lock
+          uv sync --all-groups
+      - name: Normalize Python
+        run: |
+          uv run ruff check --fix src tests migrations
+          uv run ruff format src tests migrations
+      - name: Commit generated changes
+        run: |
+          if [ -z "$(git status --porcelain -- uv.lock src tests migrations)" ]; then
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add uv.lock
-          git commit -m "chore: generate uv lock"
+          git add uv.lock src tests migrations
+          git commit -m "chore: normalize hardening branch"
           git push
