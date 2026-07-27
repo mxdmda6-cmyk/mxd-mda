@@ -4,12 +4,16 @@ on:
   push:
     branches: [agent/stack-hardening-v01]
     paths: [pyproject.toml]
+  pull_request:
+    branches: [main]
+    paths: [pyproject.toml]
 
 permissions:
   contents: write
 
 jobs:
   lock:
+    if: github.head_ref == 'agent/stack-hardening-v01' || github.ref_name == 'agent/stack-hardening-v01'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
