@@ -68,7 +68,7 @@ def dashboard(
     snapshot = current_snapshot()
 
     if json_output:
-        console.print(_dashboard_payload(), end="")
+        typer.echo(_dashboard_payload(), nl=False)
         return
 
     active_stages = [
@@ -143,7 +143,7 @@ def validate_sprint_state_command(path: Path) -> None:
 
 @app.command("doctor")
 def doctor() -> None:
-    """Run a safe local readiness check without exposing secrets."""
+    """Run a safe local readiness check without exposing credentials."""
     table = Table(title="MXD-MDA Doctor Check")
     table.add_column("Check", style="cyan")
     table.add_column("Status", style="green")
@@ -151,7 +151,7 @@ def doctor() -> None:
     table.add_row("Application", APP_NAME)
     table.add_row("Version", APP_VERSION)
     table.add_row("System status", STATUS_LABEL)
-    table.add_row("Secrets", "Not printed by design")
+    table.add_row("Credentials", "Not printed by design")
 
     for flag in FEATURE_FLAGS:
         value = _flag_value(flag)
