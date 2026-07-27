@@ -1,4 +1,5 @@
 """Typed API contracts aligned with the existing dashboard and sprint-state spine."""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -10,9 +11,7 @@ from src.orchestrator.dashboard import current_snapshot
 from src.orchestrator.sprint_state import validate_sprint_state
 
 RiskLevel = Literal["green", "yellow", "red"]
-JobStatus = Literal[
-    "queued", "held_for_review", "rejected", "completed", "failed"
-]
+JobStatus = Literal["queued", "held_for_review", "rejected", "completed", "failed"]
 
 
 class StrictModel(BaseModel):
@@ -30,7 +29,7 @@ class SprintStateContract(StrictModel):
     next_moves: list[str]
 
     @model_validator(mode="after")
-    def enforce_existing_contract(self) -> "SprintStateContract":
+    def enforce_existing_contract(self) -> SprintStateContract:
         result = validate_sprint_state(self.model_dump(mode="json"))
         if not result.valid:
             raise ValueError("; ".join(result.errors))
@@ -47,7 +46,7 @@ class DashboardContract(StrictModel):
     next_moves: list[str]
 
     @classmethod
-    def current(cls) -> "DashboardContract":
+    def current(cls) -> DashboardContract:
         return cls.model_validate(current_snapshot().to_dict())
 
 

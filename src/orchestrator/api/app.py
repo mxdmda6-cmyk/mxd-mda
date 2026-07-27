@@ -1,11 +1,12 @@
 """FastAPI integration gateway with consequential paths gated by default."""
+
 from __future__ import annotations
 
 import base64
 import hashlib
 import hmac
 from collections.abc import Callable
-from datetime import timezone
+from datetime import UTC
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 
@@ -24,7 +25,7 @@ from src.orchestrator.api.settings import Settings
 def _job_receipt(run: PipelineRun) -> JobReceipt:
     created_at = run.created_at
     if created_at.tzinfo is None:
-        created_at = created_at.replace(tzinfo=timezone.utc)
+        created_at = created_at.replace(tzinfo=UTC)
     return JobReceipt(
         run_id=run.id,
         job_type=run.job_type,
@@ -58,9 +59,7 @@ def _verify_signature(
         f"sha256={digest.hex()}",
         base64.b64encode(digest).decode("ascii"),
     }
-    if not any(
-        hmac.compare_digest(provided, candidate) for candidate in accepted
-    ):
+    if not any(hmac.compare_digest(provided, candidate) for candidate in accepted):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid webhook signature",
@@ -142,20 +141,14 @@ def create_app(
 
         return receive
 
-    notion_handler = webhook_handler(
-        "notion", lambda cfg: cfg.enable_notion_sync
-    )
+    notion_handler = webhook_handler("notion", lambda cfg: cfg.enable_notion_sync)
     notion_handler.__name__ = "receive_notion_webhook"
     shopify_handler = webhook_handler(
         "shopify",
-        lambda cfg: (
-            cfg.enable_shopify_integration and not cfg.enable_shopify_writes
-        ),
+        lambda cfg: cfg.enable_shopify_integration and not cfg.enable_shopify_writes,
     )
     shopify_handler.__name__ = "receive_shopify_webhook"
-    github_handler = webhook_handler(
-        "github", lambda cfg: cfg.enable_github_webhooks
-    )
+    github_handler = webhook_handler("github", lambda cfg: cfg.enable_github_webhooks)
     github_handler.__name__ = "receive_github_webhook"
 
     app.post("/webhooks/notion")(notion_handler)
@@ -169,9 +162,7 @@ def create_app(
     )
     def validate_asset(
         request: AssetValidationRequest,
-        idempotency_key: str = Header(
-            alias="Idempotency-Key", min_length=8
-        ),
+        idempotency_key: str = Header(alias="Idempotency-Key", min_length=8),
         cfg: Settings = Depends(get_settings),
         db: PipelineLedger = Depends(get_ledger),
     ) -> JobReceipt:
@@ -198,9 +189,7 @@ def create_app(
     )
     def canon_review(
         request: CanonReviewRequest,
-        idempotency_key: str = Header(
-            alias="Idempotency-Key", min_length=8
-        ),
+        idempotency_key: str = Header(alias="Idempotency-Key", min_length=8),
         cfg: Settings = Depends(get_settings),
         db: PipelineLedger = Depends(get_ledger),
     ) -> JobReceipt:
@@ -227,9 +216,7 @@ def create_app(
     )
     def export_backup(
         request: BackupExportRequest,
-        idempotency_key: str = Header(
-            alias="Idempotency-Key", min_length=8
-        ),
+        idempotency_key: str = Header(alias="Idempotency-Key", min_length=8),
         cfg: Settings = Depends(get_settings),
         db: PipelineLedger = Depends(get_ledger),
     ) -> JobReceipt:

@@ -1,10 +1,11 @@
 """SQLAlchemy pipeline ledger for webhook receipts and queued production work."""
+
 from __future__ import annotations
 
 import hashlib
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy import Boolean, DateTime, String, Text, create_engine, select
@@ -22,9 +23,7 @@ class PipelineRun(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     job_type: Mapped[str] = mapped_column(String(120), index=True)
     status: Mapped[str] = mapped_column(String(40), default="queued", index=True)
-    idempotency_key: Mapped[str] = mapped_column(
-        String(255), unique=True, index=True
-    )
+    idempotency_key: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     payload_sha256: Mapped[str] = mapped_column(String(64))
     payload_json: Mapped[str] = mapped_column(Text)
     requires_human_approval: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -48,9 +47,7 @@ class WebhookReceipt(Base):
 class PipelineLedger:
     def __init__(self, database_url: str) -> None:
         connect_args = (
-            {"check_same_thread": False}
-            if database_url.startswith("sqlite")
-            else {}
+            {"check_same_thread": False} if database_url.startswith("sqlite") else {}
         )
         self.engine = create_engine(
             database_url,
@@ -88,13 +85,11 @@ class PipelineLedger:
         requires_human_approval: bool = True,
     ) -> PipelineRun:
         payload_json, payload_sha256 = self.canonical_payload(payload)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         run = PipelineRun(
             id=str(uuid.uuid4()),
             job_type=job_type,
-            status=(
-                "held_for_review" if requires_human_approval else "queued"
-            ),
+            status=("held_for_review" if requires_human_approval else "queued"),
             idempotency_key=idempotency_key,
             payload_sha256=payload_sha256,
             payload_json=payload_json,
@@ -148,14 +143,12 @@ class PipelineLedger:
             delivery_id=delivery_key,
             payload_sha256=payload_sha256,
             status="received",
-            received_at=datetime.now(timezone.utc),
+            received_at=datetime.now(UTC),
         )
 
         with self.session_factory() as session:
             existing = session.scalar(
-                select(WebhookReceipt).where(
-                    WebhookReceipt.delivery_id == delivery_key
-                )
+                select(WebhookReceipt).where(WebhookReceipt.delivery_id == delivery_key)
             )
             if existing is not None:
                 if existing.payload_sha256 != payload_sha256:

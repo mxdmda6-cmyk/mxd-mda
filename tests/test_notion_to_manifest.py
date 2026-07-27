@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from src.orchestrator.notion_to_manifest import convert_records, write_bundle
@@ -28,7 +28,7 @@ def test_flat_command_ledger_export_converts_safely(
 
     bundle = convert_records(
         records,
-        generated_at=datetime(2026, 7, 27, tzinfo=timezone.utc),
+        generated_at=datetime(2026, 7, 27, tzinfo=UTC),
     )
 
     assert bundle.asset_manifest.live_publishing_enabled is False
@@ -75,7 +75,7 @@ def test_raw_notion_property_shape_is_supported() -> None:
 
     bundle = convert_records(
         records,
-        generated_at=datetime(2026, 7, 27, tzinfo=timezone.utc),
+        generated_at=datetime(2026, 7, 27, tzinfo=UTC),
     )
 
     assert bundle.asset_manifest.assets[0].command_id == "PUB-001"

@@ -11,10 +11,8 @@ Keeps all platforms aligned:
 Implementation: Week 3
 """
 
-from typing import List, Dict
 
-
-def sync_platforms(platforms: List[str]) -> Dict:
+def sync_platforms(platforms: list[str]) -> dict:
     """
     Synchronize content across specified platforms.
 

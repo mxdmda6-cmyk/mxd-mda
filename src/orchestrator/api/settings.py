@@ -1,4 +1,5 @@
 """Environment-backed settings with publishing paths sealed by default."""
+
 from __future__ import annotations
 
 import os
@@ -14,9 +15,7 @@ def _env_bool(name: str, default: bool = False) -> bool:
 
 @dataclass(frozen=True)
 class Settings:
-    database_url: str = (
-        "postgresql+psycopg://mxd_mda:mxd_mda@localhost:5432/mxd_mda"
-    )
+    database_url: str = "postgresql+psycopg://mxd_mda:mxd_mda@localhost:5432/mxd_mda"
     webhook_shared_secret: str | None = None
     enable_notion_sync: bool = False
     enable_shopify_integration: bool = False
@@ -34,7 +33,7 @@ class Settings:
             )
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         return cls(
             database_url=os.getenv("DATABASE_URL", cls.database_url),
             webhook_shared_secret=os.getenv("WEBHOOK_SHARED_SECRET") or None,

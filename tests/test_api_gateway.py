@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from fastapi.testclient import TestClient
-
 from src.orchestrator.api.app import create_app
 from src.orchestrator.api.database import PipelineLedger
 from src.orchestrator.api.settings import Settings
@@ -80,11 +79,14 @@ def test_idempotency_key_rejects_changed_payload(tmp_path: Path) -> None:
     }
     changed = {**payload, "sha256": "b" * 64}
 
-    assert client.post(
-        "/v1/assets/validate",
-        headers=headers,
-        json=payload,
-    ).status_code == 202
+    assert (
+        client.post(
+            "/v1/assets/validate",
+            headers=headers,
+            json=payload,
+        ).status_code
+        == 202
+    )
     conflict = client.post(
         "/v1/assets/validate",
         headers=headers,

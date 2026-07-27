@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated
 
@@ -105,11 +105,11 @@ def export_dashboard(
             "-o",
             help="Directory for generated dashboard JSON exports.",
         ),
-    ] = Path("exports")
+    ] = Path("exports"),
 ) -> None:
     """Write the dashboard snapshot to a timestamped JSON file."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     output_path = output_dir / f"MXD_MDA_DASHBOARD_{timestamp}_v01.json"
     output_path.write_text(_dashboard_payload(), encoding="utf-8")
     console.print(f"[green]✅ Dashboard export written:[/green] {output_path}")

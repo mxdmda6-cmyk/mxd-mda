@@ -1,4 +1,5 @@
 """Create the pipeline ledger and webhook receipt tables."""
+
 from __future__ import annotations
 
 from collections.abc import Sequence
@@ -21,16 +22,10 @@ def upgrade() -> None:
         sa.Column("idempotency_key", sa.String(length=255), nullable=False),
         sa.Column("payload_sha256", sa.String(length=64), nullable=False),
         sa.Column("payload_json", sa.Text(), nullable=False),
-        sa.Column(
-            "requires_human_approval", sa.Boolean(), nullable=False
-        ),
+        sa.Column("requires_human_approval", sa.Boolean(), nullable=False),
         sa.Column("publishing_allowed", sa.Boolean(), nullable=False),
-        sa.Column(
-            "created_at", sa.DateTime(timezone=True), nullable=False
-        ),
-        sa.Column(
-            "updated_at", sa.DateTime(timezone=True), nullable=False
-        ),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("idempotency_key"),
     )
@@ -53,9 +48,7 @@ def upgrade() -> None:
         sa.Column("delivery_id", sa.String(length=320), nullable=False),
         sa.Column("payload_sha256", sa.String(length=64), nullable=False),
         sa.Column("status", sa.String(length=40), nullable=False),
-        sa.Column(
-            "received_at", sa.DateTime(timezone=True), nullable=False
-        ),
+        sa.Column("received_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("delivery_id"),
     )

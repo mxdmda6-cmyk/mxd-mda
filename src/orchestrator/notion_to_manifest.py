@@ -4,6 +4,7 @@ This module never calls Notion, Shopify, or another live system. It accepts a
 local JSON export, normalizes supported Notion property shapes, validates the
 existing sprint-state contract, and writes deterministic review artifacts.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -11,7 +12,7 @@ import hashlib
 import json
 import re
 from collections import OrderedDict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
 
@@ -107,10 +108,7 @@ def _plain_value(value: Any) -> Any:
 
     value_type = value.get("type")
     if value_type in {"title", "rich_text"}:
-        return "".join(
-            item.get("plain_text", "")
-            for item in value.get(value_type, [])
-        )
+        return "".join(item.get("plain_text", "") for item in value.get(value_type, []))
     if value_type in {"select", "status"}:
         selected = value.get(value_type)
         return selected.get("name", "") if isinstance(selected, dict) else ""
@@ -183,11 +181,9 @@ def convert_records(
     generated_at: datetime | None = None,
 ) -> ManifestBundle:
     if not records:
-        raise ValueError(
-            "Command Ledger export must contain at least one record"
-        )
+        raise ValueError("Command Ledger export must contain at least one record")
 
-    timestamp = (generated_at or datetime.now(timezone.utc)).isoformat()
+    timestamp = (generated_at or datetime.now(UTC)).isoformat()
     assets: list[AssetRecord] = []
 
     for index, raw in enumerate(records, start=1):
@@ -214,9 +210,7 @@ def convert_records(
                 status=_status(_pick(flat, "status")),
                 owner=_pick(flat, "owner", "Shawn"),
                 canon_risk=_risk(_pick(flat, "canon_risk")),
-                approval_state=_pick(
-                    flat, "approval_state", "pending"
-                ).lower(),
+                approval_state=_pick(flat, "approval_state", "pending").lower(),
                 source_uri=_pick(flat, "source_uri"),
                 output_uri=_pick(flat, "output_uri"),
                 github_issue=_pick(flat, "github_issue"),
@@ -272,9 +266,7 @@ def convert_records(
                 {
                     "id": f"BLOCKER/{asset.command_id}",
                     "title": asset.blocker,
-                    "severity": (
-                        "high" if asset.canon_risk == "red" else "medium"
-                    ),
+                    "severity": ("high" if asset.canon_risk == "red" else "medium"),
                     "owner": asset.owner,
                     "resolution_path": asset.next_action,
                 }
@@ -289,9 +281,7 @@ def convert_records(
     sprint_state = {
         "schema_version": "1.0.0",
         "updated_at": timestamp,
-        "status_label": (
-            "Command Ledger V2 local conversion — review required"
-        ),
+        "status_label": ("Command Ledger V2 local conversion — review required"),
         "canon_risk": max_risk,
         "live_publishing_enabled": False,
         "tracks": list(tracks.values()),
@@ -318,9 +308,7 @@ def validate_asset_manifest(
     payload: dict[str, Any],
     schema_path: Path | None = None,
 ) -> None:
-    active_schema_path = schema_path or Path(
-        "docs/schemas/asset_manifest.schema.json"
-    )
+    active_schema_path = schema_path or Path("docs/schemas/asset_manifest.schema.json")
     schema = json.loads(active_schema_path.read_text(encoding="utf-8"))
     errors = sorted(
         Draft202012Validator(schema).iter_errors(payload),
@@ -328,13 +316,11 @@ def validate_asset_manifest(
     )
     if errors:
         messages = [
-            f"{'.'.join(str(part) for part in error.path) or '<root>'}: "
-            f"{error.message}"
+            f"{'.'.join(str(part) for part in error.path) or '<root>'}: {error.message}"
             for error in errors
         ]
         raise ValueError(
-            "Asset manifest schema validation failed: "
-            + "; ".join(messages)
+            "Asset manifest schema validation failed: " + "; ".join(messages)
         )
 
 
@@ -345,7 +331,7 @@ def write_bundle(
     output_dir.mkdir(parents=True, exist_ok=True)
     stamp = (
         datetime.fromisoformat(bundle.asset_manifest.generated_at)
-        .astimezone(timezone.utc)
+        .astimezone(UTC)
         .strftime("%Y%m%dT%H%M%SZ")
     )
     asset_path = output_dir / f"MXD_MDA_ASSET_MANIFEST_{stamp}_v01.json"
@@ -389,17 +375,11 @@ def main() -> None:
     args = parser.parse_args()
 
     payload = json.loads(args.input.read_text(encoding="utf-8"))
-    records = (
-        payload.get("results", payload)
-        if isinstance(payload, dict)
-        else payload
-    )
+    records = payload.get("results", payload) if isinstance(payload, dict) else payload
     if not isinstance(records, list) or not all(
         isinstance(item, dict) for item in records
     ):
-        raise SystemExit(
-            "Input must be a JSON list or an object with a results list"
-        )
+        raise SystemExit("Input must be a JSON list or an object with a results list")
 
     asset_path, sprint_path = write_bundle(
         convert_records(records),
