@@ -37,13 +37,17 @@ jobs:
           uv run python src/orchestrator/main.py version
           uv run python src/orchestrator/main.py doctor
 
-      - name: Test existing production spine
-        run: |
-          uv run pytest \
-            tests/test_dashboard_model.py \
-            tests/test_env_template.py \
-            tests/test_orchestrator_cli.py \
-            tests/test_sprint_state.py
+      - name: Test dashboard model
+        run: uv run pytest tests/test_dashboard_model.py
+
+      - name: Test environment template
+        run: uv run pytest tests/test_env_template.py
+
+      - name: Test orchestrator CLI
+        run: uv run pytest tests/test_orchestrator_cli.py
+
+      - name: Test sprint-state contract
+        run: uv run pytest tests/test_sprint_state.py
 
       - name: Test Integration Gateway
         run: uv run pytest tests/test_api_gateway.py
