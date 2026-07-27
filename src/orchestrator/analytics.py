@@ -10,10 +10,8 @@ Tracks KPIs across all platforms:
 Implementation: Week 4
 """
 
-from typing import Dict
 
-
-def generate_weekly_report() -> Dict:
+def generate_weekly_report() -> dict:
     """
     Generate comprehensive weekly status report.
 
