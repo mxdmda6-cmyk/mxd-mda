@@ -1,10 +1,8 @@
 import json
 from pathlib import Path
 
-from typer.testing import CliRunner
-
 from src.orchestrator.main import app
-
+from typer.testing import CliRunner
 
 runner = CliRunner()
 
