@@ -6,10 +6,9 @@ from src.orchestrator.api.database import PipelineLedger
 from src.orchestrator.api.settings import Settings
 
 
-def _client(tmp_path: Path, **overrides: object) -> TestClient:
+def _client(tmp_path: Path) -> TestClient:
     settings = Settings(
         database_url=f"sqlite:///{tmp_path / 'pipeline.db'}",
-        **overrides,
     )
     ledger = PipelineLedger(settings.database_url)
     return TestClient(create_app(settings=settings, ledger=ledger))
