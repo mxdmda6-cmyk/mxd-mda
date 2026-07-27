@@ -38,7 +38,20 @@ jobs:
           uv run python src/orchestrator/main.py doctor
 
       - name: Test dashboard model
-        run: uv run pytest tests/test_dashboard_model.py
+        id: dashboard_tests
+        continue-on-error: true
+        run: uv run pytest tests/test_dashboard_model.py --junitxml=dashboard-test-report.xml
+
+      - name: Upload dashboard test report
+        if: steps.dashboard_tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-test-report
+          path: dashboard-test-report.xml
+
+      - name: Enforce dashboard test result
+        if: steps.dashboard_tests.outcome == 'failure'
+        run: exit 1
 
       - name: Test environment template
         run: uv run pytest tests/test_env_template.py
