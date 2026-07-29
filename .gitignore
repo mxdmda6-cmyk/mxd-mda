@@ -168,6 +168,8 @@ tmp/
 # ─────────────────────────────────────────────────────
 assets/**/*
 !assets/README.md
+!assets/cards/
+!assets/cards/IMAGES.md
 
 # ─────────────────────────────────────────────────────
 # TEMPORARY & DEVELOPMENT
