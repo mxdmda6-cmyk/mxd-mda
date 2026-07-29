@@ -1,0 +1,40 @@
+flowchart TD
+    A[User Request or Incoming Task] --> B[Integrator & Orchestrator]
+    B --> C{Classify Workstream}
+
+    C -->|Production specs, files, exports| D[Director of Production]
+    C -->|Lore, voice, symbolism, story| E[Co-Creator & Creative Development]
+    C -->|Sprint, timeline, blockers| F[Project Manager]
+    C -->|Social, community, clue drops| G[Social Media & Community Manager]
+    C -->|Campaign, Kickstarter, offers| H[Marketing & Crowdfunding Strategist]
+    C -->|Automation, agents, dashboard| I[Bot & Agent Architect]
+
+    D --> J[Artifact or Production Note]
+    E --> K[Creative Draft or Canon Note]
+    F --> L[Sprint Update or Task Record]
+    G --> M[Community or Campaign Post Set]
+    H --> N[Campaign Brief or Conversion Asset]
+    I --> O[Automation Spec or Dashboard Schema]
+
+    K --> P{Canon Drift Gate}
+    M --> P
+    N --> P
+    J --> Q{Production QA Gate}
+    O --> R{Automation QA Gate}
+    L --> S[Task Tracker Sync]
+
+    P -->|Pass| Q
+    P -->|Warning| T[Canon Repair Queue]
+    T --> E
+    T --> B
+
+    Q -->|Pass| U[Approved Asset Folder or Publishing Queue]
+    Q -->|Fix Needed| D
+
+    R -->|Pass| S
+    R -->|Fix Needed| I
+
+    S --> V[Dashboard: Status, Risk, Owner, Next Decision]
+    U --> V
+    V --> W[Weekly Execution Summary]
+    W --> B
