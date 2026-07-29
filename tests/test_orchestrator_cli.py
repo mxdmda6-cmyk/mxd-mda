@@ -1,5 +1,9 @@
 import json
+import os
+import tempfile
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Iterator
 
 from typer.testing import CliRunner
 
@@ -7,6 +11,18 @@ from src.orchestrator.main import app
 
 
 runner = CliRunner()
+
+
+@contextmanager
+def isolated_working_directory() -> Iterator[None]:
+    """Run a test inside a temporary working directory."""
+    original_cwd = Path.cwd()
+    with tempfile.TemporaryDirectory() as temp_dir:
+        os.chdir(temp_dir)
+        try:
+            yield
+        finally:
+            os.chdir(original_cwd)
 
 
 def _valid_sprint_state() -> dict[str, object]:
@@ -83,7 +99,7 @@ def test_dashboard_json_export() -> None:
 
 
 def test_export_dashboard_writes_timestamped_json_file() -> None:
-    with runner.isolated_filesystem():
+    with isolated_working_directory():
         result = runner.invoke(app, ["export-dashboard", "--output-dir", "exports"])
 
         assert result.exit_code == 0
@@ -98,7 +114,7 @@ def test_export_dashboard_writes_timestamped_json_file() -> None:
 
 
 def test_validate_sprint_state_command_accepts_safe_file() -> None:
-    with runner.isolated_filesystem():
+    with isolated_working_directory():
         path = Path("sprint_state.json")
         path.write_text(json.dumps(_valid_sprint_state()), encoding="utf-8")
 
@@ -109,7 +125,7 @@ def test_validate_sprint_state_command_accepts_safe_file() -> None:
 
 
 def test_validate_sprint_state_command_rejects_live_publishing() -> None:
-    with runner.isolated_filesystem():
+    with isolated_working_directory():
         payload = _valid_sprint_state()
         payload["live_publishing_enabled"] = True
         path = Path("sprint_state.json")

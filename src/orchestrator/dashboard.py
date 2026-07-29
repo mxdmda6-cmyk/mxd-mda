@@ -92,7 +92,10 @@ def current_snapshot() -> DashboardSnapshot:
             ProductionRisk(
                 name="Automation overreach",
                 level="yellow",
-                mitigation="Keep publishing, social, email, and bot deployment disabled by default.",
+                mitigation=(
+                    "Keep publishing, social, email, and bot deployment disabled by "
+                    "default."
+                ),
             ),
             ProductionRisk(
                 name="Documentation drift",
@@ -107,7 +110,10 @@ def current_snapshot() -> DashboardSnapshot:
             ProductionRisk(
                 name="Stale pull request queue",
                 level="yellow",
-                mitigation="Close obsolete dependency drift and triage remaining non-mergeable PRs before merge.",
+                mitigation=(
+                    "Close obsolete dependency drift and triage remaining "
+                    "non-mergeable PRs before merge."
+                ),
             ),
         ),
         next_moves=(
