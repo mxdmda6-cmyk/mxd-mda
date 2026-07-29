@@ -76,6 +76,9 @@ yarn-error.log*
 .npm
 .yarn/
 package-lock.json
+
+# Shopify <-> GitHub Projects sync state (Shopify ID -> project item ID cache)
+scripts/shopify-github-sync/.state/
 yarn.lock
 
 # ─────────────────────────────────────────────────────
