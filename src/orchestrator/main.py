@@ -68,7 +68,7 @@ def dashboard(
     snapshot = current_snapshot()
 
     if json_output:
-        console.print(_dashboard_payload(), end="")
+        typer.echo(_dashboard_payload(), nl=False)
         return
 
     active_stages = [
@@ -76,9 +76,11 @@ def dashboard(
     ]
     next_moves = "\n".join(f"• {move}" for move in snapshot.next_moves)
     stage_lines = "\n".join(
-        f"✅ {stage.name}: {stage.summary}"
-        if stage.status == "done"
-        else f"⚗️ {stage.name}: {stage.summary}"
+        (
+            f"✅ {stage.name}: {stage.summary}"
+            if stage.status == "done"
+            else f"⚗️ {stage.name}: {stage.summary}"
+        )
         for stage in active_stages
     )
 
@@ -105,7 +107,7 @@ def export_dashboard(
             "-o",
             help="Directory for generated dashboard JSON exports.",
         ),
-    ] = Path("exports")
+    ] = Path("exports"),
 ) -> None:
     """Write the dashboard snapshot to a timestamped JSON file."""
     output_dir.mkdir(parents=True, exist_ok=True)
