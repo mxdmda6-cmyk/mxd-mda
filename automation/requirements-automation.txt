@@ -1,0 +1,27 @@
+# ═══════════════════════════════════════════════════════════════
+# MXD-MDA Automation Framework — Python Dependencies
+# ═══════════════════════════════════════════════════════════════
+#
+# Minimal install for the LLC + GitHub automation module only.
+# (The full project requirements.txt covers all other systems.)
+#
+# Install:
+#   pip install -r automation/requirements-automation.txt
+#
+# ═══════════════════════════════════════════════════════════════
+
+# ── Core runtime ─────────────────────────────────────────────
+python-dotenv>=1.0.0          # Load .env into os.environ
+pyyaml>=6.0.1                 # Parse config.yaml
+rich>=13.7.0                  # Styled terminal output (console, panels, tables)
+typer>=0.9.0                  # CLI framework for main.py
+
+# ── PDF generation ───────────────────────────────────────────
+reportlab>=4.1.0              # Programmatic PDF creation (Articles, OA, SS-4)
+# pypdf>=3.17.0               # Uncomment if you need to read/merge existing PDFs
+
+# ── GitHub automation ─────────────────────────────────────────
+PyGithub>=2.2.0               # GitHub REST API client
+
+# ── Type hints backport (Python < 3.10) ──────────────────────
+# typing-extensions>=4.9.0    # Uncomment if running Python 3.9
