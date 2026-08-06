@@ -12,7 +12,7 @@
 # CORE AI & LLM SERVICES
 # ─────────────────────────────────────────────────────────────
 anthropic>=0.18.0               # Claude AI SDK - primary orchestration
-google-generativeai>=0.3.0      # Gemini API - multi-agent coordination
+google-generativeai>=0.8.6      # Gemini API - multi-agent coordination
 langchain>=0.1.0                # LLM orchestration framework
 langchain-anthropic>=0.1.0      # Anthropic integration for LangChain
 langchain-community>=0.0.20     # Community integrations
