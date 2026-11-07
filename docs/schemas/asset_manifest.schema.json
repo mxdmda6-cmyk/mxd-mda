@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mxdmda6-cmyk/mxd-mda/docs/schemas/asset_manifest.schema.json",
+  "title": "MXD-MDA Asset Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "source_system",
+    "source_database",
+    "live_publishing_enabled",
+    "content_sha256",
+    "assets"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "source_system": {"const": "notion_export"},
+    "source_database": {"const": "MXD-MDA Command Ledger V2"},
+    "live_publishing_enabled": {"const": false},
+    "content_sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/asset"}
+    }
+  },
+  "$defs": {
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command_id",
+        "title",
+        "project",
+        "asset_id",
+        "asset_version",
+        "stage",
+        "status",
+        "owner",
+        "canon_risk",
+        "approval_state",
+        "source_uri",
+        "output_uri",
+        "github_issue",
+        "shopify_product_id",
+        "pipeline_run_id",
+        "last_sync",
+        "sync_state",
+        "blocker",
+        "next_action",
+        "sha256"
+      ],
+      "properties": {
+        "command_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_/-]+$"
+        },
+        "title": {"type": "string", "minLength": 1},
+        "project": {"type": "string", "minLength": 1},
+        "asset_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_/-]+$"
+        },
+        "asset_version": {
+          "type": "string",
+          "pattern": "^v[0-9]{2,}$"
+        },
+        "stage": {"type": "string", "minLength": 1},
+        "status": {
+          "enum": ["planned", "active", "blocked", "done"]
+        },
+        "owner": {"type": "string", "minLength": 1},
+        "canon_risk": {"enum": ["green", "yellow", "red"]},
+        "approval_state": {"type": "string", "minLength": 1},
+        "source_uri": {"type": "string"},
+        "output_uri": {"type": "string"},
+        "github_issue": {"type": "string"},
+        "shopify_product_id": {"type": "string"},
+        "pipeline_run_id": {"type": "string"},
+        "last_sync": {"type": "string"},
+        "sync_state": {"type": "string", "minLength": 1},
+        "blocker": {"type": "string"},
+        "next_action": {"type": "string", "minLength": 1},
+        "sha256": {
+          "type": "string",
+          "pattern": "^$|^[a-fA-F0-9]{64}$"
+        }
+      }
+    }
+  }
+}
