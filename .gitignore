@@ -17,6 +17,7 @@ credentials.json
 service-account.json
 config/production.yml
 config/secrets.*
+automation/config.yaml
 
 # API Keys (Platform-Specific)
 **/ANTHROPIC_API_KEY*
@@ -88,6 +89,7 @@ exports/*
 !exports/README.md
 reports/
 dashboards/
+/output/
 
 # Content Calendars (keep templates, ignore generated)
 content_calendars/*.json
