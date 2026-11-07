@@ -11,8 +11,15 @@ set -euo pipefail
 
 mkdir -p assets/raster out/cells_png out/cells_mask out/svg
 
-python - <<'PY'
+potrace_tmp=""
+if command -v potrace >/dev/null 2>&1; then
+  potrace_tmp="$(mktemp -d)"
+  trap 'rm -rf "$potrace_tmp"' EXIT
+fi
+
+python - "$potrace_tmp" <<'PY'
 from pathlib import Path
+import sys
 from PIL import Image, ImageOps, ImageFilter
 
 src = Path("assets/raster/source_table.png")
@@ -36,6 +43,7 @@ out_png = Path("out/cells_png")
 out_mask = Path("out/cells_mask")
 out_png.mkdir(parents=True, exist_ok=True)
 out_mask.mkdir(parents=True, exist_ok=True)
+potrace_tmp = Path(sys.argv[1]) if sys.argv[1] else None
 
 def make_mask(im):
     g = ImageOps.grayscale(im)
@@ -61,15 +69,17 @@ for r in range(rows):
         mask = make_mask(cell)
         mask_path = out_mask / f"cell_{idx:02d}_mask.png"
         mask.save(mask_path)
+        if potrace_tmp is not None:
+            mask.save(potrace_tmp / f"cell_{idx:02d}.pbm")
 
 print("Done: sliced PNG cells + created masks.")
 PY
 
 # Optional: auto-trace masks into SVGs (best if potrace exists)
-if command -v potrace >/dev/null 2>&1; then
+if [[ -n "$potrace_tmp" ]]; then
   echo "potrace detected: generating SVGs..."
-  for f in out/cells_mask/*_mask.png; do
-    base="$(basename "$f" _mask.png)"
+  for f in "$potrace_tmp"/*.pbm; do
+    base="$(basename "$f" .pbm)"
     potrace "$f" -s -o "out/svg/${base}.svg"
   done
   echo "Done: out/svg/*.svg created."
