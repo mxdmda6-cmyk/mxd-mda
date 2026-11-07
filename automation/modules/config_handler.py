@@ -174,6 +174,12 @@ def load_config(config_path: str = "automation/config.yaml") -> EntityConfig:
     rp_raw = ein_raw.get("responsible_party", {})
     gh_raw = raw.get("github", {})
     out_raw = raw.get("output", {})
+    visibility = gh_raw.get("visibility", "private")
+    if visibility not in {"private", "public"}:
+        raise ValueError(
+            "github.visibility must be either 'private' or 'public'; "
+            "refusing to guess repository visibility."
+        )
 
     # ── Parse members ────────────────────────────────────────────
     members: List[Member] = [
@@ -262,7 +268,7 @@ def load_config(config_path: str = "automation/config.yaml") -> EntityConfig:
             default_labels=labels,
             milestones=milestones,
             issues=issues,
-            visibility=gh_raw.get("visibility", "private"),
+            visibility=visibility,
         ),
         output=OutputConfig(
             directory=out_raw.get("directory", "./output/documents"),

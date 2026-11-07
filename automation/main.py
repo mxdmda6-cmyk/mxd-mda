@@ -19,7 +19,7 @@ Setup:
     1. pip install -r automation/requirements-automation.txt
     2. cp .env.example .env
     3. Fill in GITHUB_TOKEN (and other keys) in .env
-    4. Edit automation/config.yaml with your entity details
+    4. Copy automation/config.yaml.example to automation/config.yaml (gitignored), then edit it
     5. python automation/main.py --llc --github --project-name "my-initiative"
 
 Security:
@@ -196,9 +196,9 @@ def main(
             )
         )
 
-    # ── GitHub Project Setup ──────────────────────────────────────
+    # ── GitHub Repository Setup ───────────────────────────────────
     if github:
-        console.rule("\n[bold]Setting Up GitHub Project")
+        console.rule("\n[bold]Setting Up GitHub Repository")
         token = require_github_token(env)
 
         try:
@@ -221,7 +221,7 @@ def main(
                 "to create a Kanban board.  Use this saved filter to auto-populate it:\n\n"
                 "  [italic]is:issue is:open[/]\n\n"
                 "All issues are already labeled and assigned to milestones.",
-                title="[green]GitHub Project Ready",
+                title="[green]GitHub Repository Ready",
                 border_style="green",
             )
         )

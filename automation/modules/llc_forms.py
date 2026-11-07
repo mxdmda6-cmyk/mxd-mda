@@ -27,9 +27,11 @@ IMPORTANT:
 from __future__ import annotations
 
 import os
+import re
 from datetime import date
 from pathlib import Path
 from typing import List
+from xml.sax.saxutils import escape
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
@@ -103,6 +105,12 @@ def _today() -> str:
     return date.today().strftime("%B %d, %Y")
 
 
+def _safe_filename(value: str) -> str:
+    """Keep generated document names portable and inside the output directory."""
+    filename = re.sub(r"[^A-Za-z0-9_-]+", "_", value).strip("_")
+    return filename or "entity"
+
+
 def _hr() -> HRFlowable:
     return HRFlowable(width="100%", thickness=0.5, color=colors.lightgrey, spaceAfter=6)
 
@@ -111,7 +119,7 @@ def _field_block(label: str, value: str) -> List:
     """Return a label + underlined value pair as ReportLab flowables."""
     return [
         Paragraph(label, _STYLE_LABEL),
-        Paragraph(f"<u>{value}</u>", _STYLE_BODY),
+        Paragraph(f"<u>{escape(value)}</u>", _STYLE_BODY),
         Spacer(1, 4),
     ]
 
@@ -121,8 +129,8 @@ def _signature_block(name: str, title: str) -> List:
     return [
         Spacer(1, 24),
         HRFlowable(width=3 * inch, thickness=0.5, color=colors.black, spaceAfter=2),
-        Paragraph(name, _STYLE_BODY),
-        Paragraph(title, _STYLE_LABEL),
+        Paragraph(escape(name), _STYLE_BODY),
+        Paragraph(escape(title), _STYLE_LABEL),
         Spacer(1, 4),
     ]
 
@@ -140,7 +148,7 @@ def _build_doc(output_path: Path, margin_mm: int) -> SimpleDocTemplate:
 
 
 def _footer_text(entity_name: str, doc_type: str) -> str:
-    return f"{entity_name} | {doc_type} | Generated {_today()} — FOR REVIEW ONLY"
+    return f"{escape(entity_name)} | {doc_type} | Generated {_today()} — FOR REVIEW ONLY"
 
 
 # ── 1. Articles of Organization ──────────────────────────────────────────────
@@ -166,7 +174,7 @@ def generate_articles_of_organization(cfg: EntityConfig, output_dir: Path) -> Pa
     Returns:
         Path to the generated PDF file.
     """
-    output_path = output_dir / f"{cfg.name.replace(' ', '_')}_Articles_of_Organization.pdf"
+    output_path = output_dir / f"{_safe_filename(cfg.name)}_Articles_of_Organization.pdf"
     doc = _build_doc(output_path, cfg.output.pdf_margin_mm)
     story = []
 
@@ -207,7 +215,10 @@ def generate_articles_of_organization(cfg: EntityConfig, output_dir: Path) -> Pa
     story.extend(_field_block("Registered Agent Name", cfg.registered_agent.name))
     story.extend(_field_block(
         "Registered Office Address (must be a physical MN address — no P.O. Box)",
-        cfg.registered_agent.single_line(),
+        (
+            f"{cfg.registered_agent.address}, {cfg.registered_agent.city}, "
+            f"{cfg.registered_agent.state} {cfg.registered_agent.zip}"
+        ),
     ))
 
     # ── Article III — Principal Office ────────────────────────────
@@ -315,13 +326,13 @@ def generate_operating_agreement(cfg: EntityConfig, output_dir: Path) -> Path:
     Returns:
         Path to the generated PDF file.
     """
-    output_path = output_dir / f"{cfg.name.replace(' ', '_')}_Operating_Agreement.pdf"
+    output_path = output_dir / f"{_safe_filename(cfg.name)}_Operating_Agreement.pdf"
     doc = _build_doc(output_path, cfg.output.pdf_margin_mm)
     story = []
 
     # ── Header ────────────────────────────────────────────────────
     story.append(Paragraph("OPERATING AGREEMENT", _STYLE_TITLE))
-    story.append(Paragraph(f"OF {cfg.name.upper()}", _STYLE_CENTER))
+    story.append(Paragraph(f"OF {escape(cfg.name.upper())}", _STYLE_CENTER))
     story.append(Paragraph(
         f"A Minnesota Limited Liability Company",
         ParagraphStyle("SmallCenter", parent=_STYLE_CENTER, fontSize=9, textColor=colors.grey),
@@ -331,7 +342,7 @@ def generate_operating_agreement(cfg: EntityConfig, output_dir: Path) -> Path:
     story.append(Paragraph(
         f"This Operating Agreement ('Agreement') is entered into as of {_today()}, "
         f"by and among the Members listed herein, for the purpose of forming and "
-        f"operating {cfg.name}, a limited liability company organized under the "
+        f"operating {escape(cfg.name)}, a limited liability company organized under the "
         f"laws of the State of Minnesota (Minnesota Statutes, Chapter 322C).",
         _STYLE_BODY,
     ))
@@ -384,7 +395,7 @@ def generate_operating_agreement(cfg: EntityConfig, output_dir: Path) -> Path:
     story.append(Paragraph("SECTION 3 — MANAGEMENT", _STYLE_HEADING))
     managing_members = [m for m in cfg.members if "managing" in m.title.lower()]
     if managing_members:
-        mm_names = ", ".join(m.name for m in managing_members)
+        mm_names = escape(", ".join(m.name for m in managing_members))
         story.append(Paragraph(
             f"The LLC shall be managed by its Managing Member(s): <b>{mm_names}</b>. "
             "The Managing Member(s) shall have authority to bind the company, execute "
@@ -519,7 +530,7 @@ def generate_ss4_application(cfg: EntityConfig, output_dir: Path) -> Path:
         Path to the generated PDF file.
     """
     ein = cfg.ein_application
-    output_path = output_dir / f"{cfg.name.replace(' ', '_')}_SS4_EIN_Application.pdf"
+    output_path = output_dir / f"{_safe_filename(cfg.name)}_SS4_EIN_Application.pdf"
     doc = _build_doc(output_path, cfg.output.pdf_margin_mm)
     story = []
 
@@ -584,9 +595,10 @@ def generate_ss4_application(cfg: EntityConfig, output_dir: Path) -> Path:
         "Partnership" if len(cfg.members) > 1 else "Disregarded entity (single-member LLC)",
     ))
     story.extend(_field_block("Line 9a: Reason for applying", ein.reason_for_applying))
+    business_start_date = date.fromisoformat(ein.business_start_date).strftime("%m/%d/%Y")
     story.extend(_field_block(
         "Line 10: Date business started or acquired (MM/DD/YYYY)",
-        ein.business_start_date,
+        business_start_date,
     ))
     story.extend(_field_block(
         "Line 11: Closing month of accounting year",
@@ -597,7 +609,11 @@ def generate_ss4_application(cfg: EntityConfig, output_dir: Path) -> Path:
     story.append(Paragraph("PART IV — BUSINESS ACTIVITY", _STYLE_HEADING))
     story.extend(_field_block(
         "Line 12: First date wages or annuities were paid (if none, skip)",
-        "N/A — no employees",
+        (
+            "N/A — no employees expected"
+            if ein.expected_employees == 0
+            else "Not provided — enter first wage payment date"
+        ),
     ))
     story.extend(_field_block(
         "Line 13: Highest number of employees expected in next 12 months",

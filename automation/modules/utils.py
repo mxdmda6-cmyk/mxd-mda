@@ -82,7 +82,7 @@ def require_github_token(env: dict[str, str]) -> str:
             Panel(
                 "[bold red]GITHUB_TOKEN is missing or is still a placeholder.[/]\n\n"
                 "1. Go to https://github.com/settings/tokens\n"
-                "2. Create a token with [bold]repo[/] and [bold]project[/] scopes\n"
+                "2. Create a token with the [bold]repo[/] scope\n"
                 "3. Add it to your [bold].env[/] file:\n\n"
                 "   GITHUB_TOKEN=ghp_your_actual_token_here",
                 title="[red]Authentication Required",

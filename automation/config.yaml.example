@@ -9,13 +9,14 @@
 #   - GitHub repository structure, issues, and milestones
 #
 # SECURITY RULES:
-#   • Never commit real SSNs, EINs, or API keys to this file.
-#   • Sensitive fields (ssn_or_itin) use placeholders; fill them
-#     only at signing time in a local copy that is .gitignored.
+#   • This file is a template. Copy it to automation/config.yaml and keep
+#     real SSNs, EINs, and other private details only in that ignored file.
+#   • Never commit a real SSN, EIN, or API key.
 #   • API keys live exclusively in the .env file (see .env.example).
 #
 # USAGE:
-#   python main.py --config automation/config.yaml [--llc] [--github]
+#   Copy this file to automation/config.yaml, then run:
+#   python automation/main.py --config automation/config.yaml [--llc] [--github]
 # ═══════════════════════════════════════════════════════════════
 
 # ── Entity Identity ─────────────────────────────────────────────

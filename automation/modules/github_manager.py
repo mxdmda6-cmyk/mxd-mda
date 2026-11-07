@@ -6,12 +6,10 @@ For every new MXD-MDA transmedia initiative this module:
   2. Creates custom labels in the repo
   3. Creates milestones with due dates derived from config.yaml
   4. Creates pre-populated issues assigned to the right milestone and labels
-  5. Adds the repo to a GitHub Project (Projects v2 / classic Kanban board)
 
 Authentication:
     Set GITHUB_TOKEN in your .env file.  The token needs:
       - repo scope  (create/manage repositories)
-      - project scope  (manage projects)
     Generate one at: https://github.com/settings/tokens
 
     The token is loaded from the environment by main.py — never hard-code it here.
@@ -134,7 +132,9 @@ def _safe_create_issue(
     for label_name in issue.labels:
         try:
             label_objects.append(repo.get_label(label_name))
-        except GithubException:
+        except GithubException as exc:
+            if exc.status != 404:
+                raise
             console.print(f"  [red]![/] Label '{label_name}' not found — skipping")
 
     # Resolve milestone object
@@ -160,8 +160,7 @@ def _safe_create_issue(
 
 def _init_readme(repo: Repository.Repository, cfg: EntityConfig, project_name: str) -> None:
     """
-    Push an initial README.md to the newly created repo with project context
-    and links to the generated Kanban board.
+    Push an initial README.md to the newly created repo with project context.
     """
     content = f"""# {project_name}
 
@@ -181,15 +180,11 @@ spanning compliance, brand/narrative, and technical development.
 | Phase 2 — Infrastructure Ready | Supabase live, staging environment |
 | Phase 3 — Project Launch | Full cross-platform release |
 
-## Quick Start
+## Automation
 
-```bash
-# Generate all LLC documents
-python main.py --config automation/config.yaml --llc
-
-# Set up GitHub project structure
-python main.py --config automation/config.yaml --github --project-name "{project_name}"
-```
+This repository contains project planning and tracking files. LLC document
+generation and repository setup are maintained in the
+[MXD-MDA automation repository](https://github.com/mxdmda6-cmyk/mxd-mda).
 
 ## Structure
 
@@ -313,13 +308,18 @@ def setup_github_project(
 
     # ── Resolve org or personal account ──────────────────────────
     target = gh_cfg.org_or_user
-    try:
-        org = gh.get_organization(target)
-        owner = org
-        console.print(f"[dim]Target:[/] organization [bold]{target}[/]")
-    except GithubException:
+    if target.casefold() == actor.login.casefold():
         owner = actor
         console.print(f"[dim]Target:[/] personal account [bold]{target}[/]")
+    else:
+        try:
+            owner = gh.get_organization(target)
+        except GithubException as exc:
+            raise ValueError(
+                f"Configured GitHub organization '{target}' could not be resolved. "
+                f"Refusing to create the repository under '{actor.login}'."
+            ) from exc
+        console.print(f"[dim]Target:[/] organization [bold]{target}[/]")
 
     # ── Create repository ─────────────────────────────────────────
     is_private = gh_cfg.visibility == "private"
