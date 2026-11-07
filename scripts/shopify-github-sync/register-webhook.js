@@ -40,6 +40,7 @@ async function main() {
 
   const targetAddress = `${env.PUBLIC_WEBHOOK_URL}/webhooks/shopify/products`;
   const existing = await listExistingWebhooks();
+  let failed = false;
 
   for (const topic of TOPICS) {
     const already = existing.find((w) => w.topic === topic && w.address === targetAddress);
@@ -51,9 +52,11 @@ async function main() {
       const created = await createWebhook(topic, targetAddress);
       logger.info('Registered webhook', { topic, id: created.webhook.id, address: targetAddress });
     } catch (err) {
+      failed = true;
       logger.error('Failed to register webhook', { topic, error: err.message });
     }
   }
+  if (failed) process.exitCode = 1;
 }
 
 main().catch((err) => {

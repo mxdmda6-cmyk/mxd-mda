@@ -4,14 +4,22 @@ const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
 export const SHOPIFY_ID_FIELD_NAME = 'Shopify Product ID';
 
 async function githubGraphQL(query, variables) {
-  const res = await fetch(GITHUB_GRAPHQL_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ query, variables }),
-  });
+  let res;
+  try {
+    res = await fetch(GITHUB_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+  } catch (cause) {
+    const detail = cause instanceof Error ? cause.message : String(cause);
+    const err = new Error(`GitHub GraphQL network error: ${detail}`);
+    err.retryable = true;
+    throw err;
+  }
 
   if (res.status === 429 || res.status >= 500) {
     const err = new Error(`GitHub GraphQL transient error: HTTP ${res.status}`);

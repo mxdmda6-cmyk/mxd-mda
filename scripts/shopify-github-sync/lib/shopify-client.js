@@ -12,7 +12,15 @@ function authHeaders() {
 }
 
 async function shopifyRequest(path, options = {}) {
-  const res = await fetch(`${baseUrl()}${path}`, { headers: authHeaders(), ...options });
+  let res;
+  try {
+    res = await fetch(`${baseUrl()}${path}`, { headers: authHeaders(), ...options });
+  } catch (cause) {
+    const detail = cause instanceof Error ? cause.message : String(cause);
+    const err = new Error(`Shopify API network error: ${detail}`);
+    err.retryable = true;
+    throw err;
+  }
 
   if (res.status === 429 || res.status >= 500) {
     const err = new Error(`Shopify API transient error: HTTP ${res.status}`);
