@@ -149,6 +149,28 @@ This guide provides step-by-step instructions for integrating content across the
 
 ---
 
+## 🧩 Raster Table → Vector Glyphs
+
+Use the vector pass script to slice a 3×4 table image into individual PNG cells, create bitmap masks, and optionally trace SVGs with `potrace`.
+
+1. **Place the raster source:**
+   - Save the table image as `assets/raster/source_table.png`.
+
+2. **Run the vector pass:**
+   ```bash
+   ./scripts/mxd-mda-vector-pass.sh
+   ```
+
+3. **Review outputs:**
+   - `out/cells_png/*.png` for the sliced cells.
+   - `out/cells_mask/*_mask.png` for binary masks.
+   - `out/svg/*.svg` if `potrace` is installed.
+
+4. **Optional Inkscape trace:**
+   - If `potrace` is missing, use Inkscape: **File → Import mask PNG → Path → Trace Bitmap → Save as SVG**.
+
+---
+
 ## 🤖 AI Agent API Integration
 
 ### FastAPI Endpoint Structure
