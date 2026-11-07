@@ -1,0 +1,12 @@
+{
+  "id": "crow_signal_v0",
+  "name": "Crow Signal Dry Run",
+  "description": "Classify archetype, choose hold or dry run, then log the local run without external side effects.",
+  "steps": [
+    { "id": "extract", "type": "extract_text" },
+    { "id": "classify", "type": "classify_archetype", "params": { "default": "Crow" } },
+    { "id": "route", "type": "route_action" },
+    { "id": "act", "type": "publish_stub" },
+    { "id": "log", "type": "log_run" }
+  ]
+}
