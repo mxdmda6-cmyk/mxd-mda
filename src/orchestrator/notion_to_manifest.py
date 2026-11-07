@@ -161,9 +161,11 @@ def _status(value: str) -> TaskStatus:
 
 def _risk(value: str) -> RiskLevel:
     normalized = value.strip().lower()
+    if not normalized:
+        return "green"
     if normalized in RISK_ORDER:
         return normalized  # type: ignore[return-value]
-    return "green"
+    raise ValueError(f"Unsupported canon risk value: {value!r}")
 
 
 def _version(value: str) -> str:
@@ -308,7 +310,12 @@ def validate_asset_manifest(
     payload: dict[str, Any],
     schema_path: Path | None = None,
 ) -> None:
-    active_schema_path = schema_path or Path("docs/schemas/asset_manifest.schema.json")
+    active_schema_path = schema_path or (
+        Path(__file__).resolve().parents[2]
+        / "docs"
+        / "schemas"
+        / "asset_manifest.schema.json"
+    )
     schema = json.loads(active_schema_path.read_text(encoding="utf-8"))
     errors = sorted(
         Draft202012Validator(schema).iter_errors(payload),

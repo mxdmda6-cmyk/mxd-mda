@@ -2,12 +2,14 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
 from src.orchestrator.notion_to_manifest import convert_records, write_bundle
 from src.orchestrator.sprint_state import validate_sprint_state
 
 
 def test_flat_command_ledger_export_converts_safely(
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     records = [
         {
@@ -36,7 +38,8 @@ def test_flat_command_ledger_export_converts_safely(
     assert bundle.sprint_state["live_publishing_enabled"] is False
     assert validate_sprint_state(bundle.sprint_state).valid is True
 
-    asset_path, sprint_path = write_bundle(bundle, tmp_path)
+    monkeypatch.chdir(tmp_path)
+    asset_path, sprint_path = write_bundle(bundle, tmp_path / "exports")
     asset_payload = json.loads(asset_path.read_text(encoding="utf-8"))
 
     assert asset_path.exists()
@@ -89,3 +92,17 @@ def test_converter_rejects_missing_title() -> None:
         assert "missing Title/Name" in str(exc)
     else:
         raise AssertionError("Missing title must be rejected")
+
+
+def test_converter_rejects_unknown_canon_risk() -> None:
+    record = {
+        "Title": "Review canon",
+        "Canon Risk": "unknown",
+    }
+
+    try:
+        convert_records([record])
+    except ValueError as exc:
+        assert "Unsupported canon risk value" in str(exc)
+    else:
+        raise AssertionError("Unknown canon risk must not be treated as green")

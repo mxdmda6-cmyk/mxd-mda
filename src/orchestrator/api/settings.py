@@ -16,6 +16,7 @@ def _env_bool(name: str, default: bool = False) -> bool:
 @dataclass(frozen=True)
 class Settings:
     database_url: str = "postgresql+psycopg://mxd_mda:mxd_mda@localhost:5432/mxd_mda"
+    api_shared_secret: str | None = None
     webhook_shared_secret: str | None = None
     enable_notion_sync: bool = False
     enable_shopify_integration: bool = False
@@ -36,6 +37,7 @@ class Settings:
     def from_env(cls) -> Settings:
         return cls(
             database_url=os.getenv("DATABASE_URL", cls.database_url),
+            api_shared_secret=os.getenv("API_SHARED_SECRET") or None,
             webhook_shared_secret=os.getenv("WEBHOOK_SHARED_SECRET") or None,
             enable_notion_sync=_env_bool("ENABLE_NOTION_SYNC"),
             enable_shopify_integration=_env_bool("ENABLE_SHOPIFY_INTEGRATION"),

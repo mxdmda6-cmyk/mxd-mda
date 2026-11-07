@@ -106,9 +106,12 @@ class PipelineLedger:
                 )
             )
             if existing is not None:
-                if existing.payload_sha256 != payload_sha256:
+                if (
+                    existing.job_type != job_type
+                    or existing.payload_sha256 != payload_sha256
+                ):
                     raise ValueError(
-                        "Idempotency key already exists with a different payload"
+                        "Idempotency key already exists with a different job type or payload"
                     )
                 return existing
 
@@ -122,8 +125,15 @@ class PipelineLedger:
                         PipelineRun.idempotency_key == idempotency_key
                     )
                 )
-                if existing is None or existing.payload_sha256 != payload_sha256:
+                if existing is None:
                     raise
+                if (
+                    existing.job_type != job_type
+                    or existing.payload_sha256 != payload_sha256
+                ):
+                    raise ValueError(
+                        "Idempotency key already exists with a different job type or payload"
+                    ) from None
                 return existing
             return run
 
@@ -151,12 +161,33 @@ class PipelineLedger:
                 select(WebhookReceipt).where(WebhookReceipt.delivery_id == delivery_key)
             )
             if existing is not None:
-                if existing.payload_sha256 != payload_sha256:
+                if (
+                    existing.event_type != event_type
+                    or existing.payload_sha256 != payload_sha256
+                ):
                     raise ValueError(
-                        "Webhook delivery ID replayed with a different payload"
+                        "Webhook delivery ID replayed with different event data"
                     )
                 return existing
 
             session.add(receipt)
-            session.commit()
+            try:
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                existing = session.scalar(
+                    select(WebhookReceipt).where(
+                        WebhookReceipt.delivery_id == delivery_key
+                    )
+                )
+                if existing is None:
+                    raise
+                if (
+                    existing.event_type != event_type
+                    or existing.payload_sha256 != payload_sha256
+                ):
+                    raise ValueError(
+                        "Webhook delivery ID replayed with different event data"
+                    ) from None
+                return existing
             return receipt

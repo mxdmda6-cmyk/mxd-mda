@@ -89,6 +89,29 @@ def create_app(
     def get_ledger() -> PipelineLedger:
         return app.state.ledger
 
+    def require_api_auth(
+        authorization: str | None = Header(default=None),
+        cfg: Settings = Depends(get_settings),
+    ) -> None:
+        if not cfg.api_shared_secret:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="API shared secret is not configured",
+            )
+        scheme, separator, credential = (authorization or "").partition(" ")
+        if (
+            not separator
+            or scheme.lower() != "bearer"
+            or not hmac.compare_digest(
+                credential.encode("utf-8"),
+                cfg.api_shared_secret.encode("utf-8"),
+            )
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or missing API credentials",
+            )
+
     @app.get("/health/live", response_model=HealthResponse)
     def health_live() -> HealthResponse:
         return HealthResponse(status="ok", live_publishing_enabled=False)
@@ -162,7 +185,12 @@ def create_app(
     )
     def validate_asset(
         request: AssetValidationRequest,
-        idempotency_key: str = Header(alias="Idempotency-Key", min_length=8),
+        idempotency_key: str = Header(
+            alias="Idempotency-Key",
+            min_length=8,
+            max_length=255,
+        ),
+        _: None = Depends(require_api_auth),
         cfg: Settings = Depends(get_settings),
         db: PipelineLedger = Depends(get_ledger),
     ) -> JobReceipt:
@@ -189,7 +217,12 @@ def create_app(
     )
     def canon_review(
         request: CanonReviewRequest,
-        idempotency_key: str = Header(alias="Idempotency-Key", min_length=8),
+        idempotency_key: str = Header(
+            alias="Idempotency-Key",
+            min_length=8,
+            max_length=255,
+        ),
+        _: None = Depends(require_api_auth),
         cfg: Settings = Depends(get_settings),
         db: PipelineLedger = Depends(get_ledger),
     ) -> JobReceipt:
@@ -216,7 +249,12 @@ def create_app(
     )
     def export_backup(
         request: BackupExportRequest,
-        idempotency_key: str = Header(alias="Idempotency-Key", min_length=8),
+        idempotency_key: str = Header(
+            alias="Idempotency-Key",
+            min_length=8,
+            max_length=255,
+        ),
+        _: None = Depends(require_api_auth),
         cfg: Settings = Depends(get_settings),
         db: PipelineLedger = Depends(get_ledger),
     ) -> JobReceipt:

@@ -71,7 +71,8 @@ The MVP is a modular monolith: one FastAPI service, one transactional pipeline l
 ## Security invariants
 
 1. All consequential routes require an idempotency key.
-2. Webhooks require an enabled source flag and configured HMAC secret.
-3. Payloads receive canonical SHA-256 hashes before persistence.
-4. Replayed identifiers with changed payloads are rejected.
-5. No agent or adapter receives unrestricted live-system write authority.
+2. Job-submission routes require a configured `API_SHARED_SECRET` bearer token.
+3. Webhooks require an enabled source flag and configured HMAC secret.
+4. Payloads receive canonical SHA-256 hashes before persistence.
+5. Replayed identifiers with changed payloads are rejected.
+6. No agent or adapter receives unrestricted live-system write authority.
