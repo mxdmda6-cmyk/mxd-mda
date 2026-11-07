@@ -27,8 +27,11 @@ try:
     from src.orchestrator.dashboard import current_snapshot
     from src.orchestrator.sprint_state import load_sprint_state, validate_sprint_state
 except ModuleNotFoundError:  # pragma: no cover - supports direct script execution
-    from dashboard import current_snapshot
-    from sprint_state import load_sprint_state, validate_sprint_state
+    from dashboard import current_snapshot  # type: ignore[no-redef]
+    from sprint_state import (  # type: ignore[no-redef]
+        load_sprint_state,
+        validate_sprint_state,
+    )
 
 APP_NAME = "MXD-MDA Orchestrator"
 APP_VERSION = "0.1.0-foundation"
@@ -68,7 +71,7 @@ def dashboard(
     snapshot = current_snapshot()
 
     if json_output:
-        console.print(_dashboard_payload(), end="")
+        console.print(_dashboard_payload(), end="", soft_wrap=True)
         return
 
     active_stages = [
@@ -76,9 +79,11 @@ def dashboard(
     ]
     next_moves = "\n".join(f"• {move}" for move in snapshot.next_moves)
     stage_lines = "\n".join(
-        f"✅ {stage.name}: {stage.summary}"
-        if stage.status == "done"
-        else f"⚗️ {stage.name}: {stage.summary}"
+        (
+            f"✅ {stage.name}: {stage.summary}"
+            if stage.status == "done"
+            else f"⚗️ {stage.name}: {stage.summary}"
+        )
         for stage in active_stages
     )
 
@@ -105,7 +110,7 @@ def export_dashboard(
             "-o",
             help="Directory for generated dashboard JSON exports.",
         ),
-    ] = Path("exports")
+    ] = Path("exports"),
 ) -> None:
     """Write the dashboard snapshot to a timestamped JSON file."""
     output_dir.mkdir(parents=True, exist_ok=True)

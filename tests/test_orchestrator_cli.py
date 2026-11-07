@@ -1,12 +1,31 @@
 import json
+import os
+import tempfile
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
+from src.orchestrator.main import app
 from typer.testing import CliRunner
 
-from src.orchestrator.main import app
-
-
 runner = CliRunner()
+
+
+@contextmanager
+def isolated_filesystem() -> Iterator[str]:
+    """Run a block inside a temporary cwd.
+
+    typer's vendored CliRunner (0.16+) dropped isolated_filesystem(), which
+    click's CliRunner still provides; this local replacement keeps the tests
+    independent of that internal.
+    """
+    original_cwd = os.getcwd()
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        os.chdir(tmp_dir)
+        try:
+            yield tmp_dir
+        finally:
+            os.chdir(original_cwd)
 
 
 def _valid_sprint_state() -> dict[str, object]:
@@ -83,7 +102,7 @@ def test_dashboard_json_export() -> None:
 
 
 def test_export_dashboard_writes_timestamped_json_file() -> None:
-    with runner.isolated_filesystem():
+    with isolated_filesystem():
         result = runner.invoke(app, ["export-dashboard", "--output-dir", "exports"])
 
         assert result.exit_code == 0
@@ -98,7 +117,7 @@ def test_export_dashboard_writes_timestamped_json_file() -> None:
 
 
 def test_validate_sprint_state_command_accepts_safe_file() -> None:
-    with runner.isolated_filesystem():
+    with isolated_filesystem():
         path = Path("sprint_state.json")
         path.write_text(json.dumps(_valid_sprint_state()), encoding="utf-8")
 
@@ -109,7 +128,7 @@ def test_validate_sprint_state_command_accepts_safe_file() -> None:
 
 
 def test_validate_sprint_state_command_rejects_live_publishing() -> None:
-    with runner.isolated_filesystem():
+    with isolated_filesystem():
         payload = _valid_sprint_state()
         payload["live_publishing_enabled"] = True
         path = Path("sprint_state.json")
