@@ -33,7 +33,7 @@ def step_extract_text(ctx: dict[str, Any], params: dict[str, Any]) -> None:
 def step_classify_archetype(ctx: dict[str, Any], params: dict[str, Any]) -> None:
     """Classify text with a deterministic v0 rule set."""
     text = (ctx.get("clean_text") or "").lower()
-    hits = [word for word in CROW_KEYWORDS if word in text]
+    hits = sorted(word for word in CROW_KEYWORDS if word in text)
     ctx["archetype"] = "Crow" if hits else params.get("default", "Crow")
     ctx["archetype_hits"] = hits
 

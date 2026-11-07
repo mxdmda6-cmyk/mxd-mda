@@ -28,6 +28,7 @@ def _pathway() -> dict[str, object]:
 def test_default_route_is_dry_run_not_external_action() -> None:
     result = run_pathway(_pathway(), {"text": "Crow at the threshold"})
 
+    assert result["hits"] == ["crow", "threshold"]
     assert result["action"] == "DRY_RUN"
     assert result["publish_result"]["published"] is False
     assert result["publish_result"]["mode"] == "dry_run"
